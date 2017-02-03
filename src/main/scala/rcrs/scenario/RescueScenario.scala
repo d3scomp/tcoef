@@ -60,6 +60,8 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
     }
 
     actions {
+      println(s"action ${this.toStringWithUtility}")
+
       //mobileUnits.foreachBySelection(_.explorationZone = zone, _.explorationZone = null)
       // assigns zones nulled in System.actions
       mobileUnits.foreachBySelection(_.areaExplorationAssignedZone = zone, _ => ())
