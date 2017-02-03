@@ -58,7 +58,7 @@ class FireBrigadeAgent extends ScalaAgent {
       component.init()
 
       while (component.solve()) {
-        println(component.toStringWithSolution)
+        println(component.toStringWithUtility)
       }
 
       component.commit()

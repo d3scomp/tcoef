@@ -50,7 +50,8 @@ trait Component extends WithName with WithUtility with WithStateSets with WithAc
   override def toString: String =
     s"""Component "$name""""
 
-  def toStringWithSolution: String =
+  def toStringWithUtility: String = {
     s"""Component "$name" (utility: $solutionUtility)${indent(_rootState.toString, 1)}"""
+  }
 
 }
