@@ -1,7 +1,7 @@
 package rcrs
 
-import rescuecore2.Constants
-import rescuecore2.components.TCPComponentLauncher
+import rescuecore2.Constants                           //rescuecore2 = simulator
+import rescuecore2.components.TCPComponentLauncher      
 import rescuecore2.config.Config
 import rescuecore2.log.Logger
 import rescuecore2.misc.CommandLineOptions
