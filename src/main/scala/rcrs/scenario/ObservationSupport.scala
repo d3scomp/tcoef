@@ -52,7 +52,6 @@ trait ObservationSupport {
       map.nodeStatus ++= statusChanges
 
       val msg = new ExplorationStatus(agent.currentAreaId, statusChanges.collect { case (node, status) => map.closeAreaIDs(agent.currentAreaId).byAreaId(map.toArea(node).getID) -> status }.toMap)
-      println(msg)
       agent.sendSpeak(time, Constants.TO_STATION, Message.encode(msg))
     }
   }

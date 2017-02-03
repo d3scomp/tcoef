@@ -54,11 +54,6 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
       mobileUnits.sum(proximityToZoneCenter(_))
     )
 
-    // TODO - added only to demonstrate functionality in preActions (FP)
-    preActions {
-      println(s"preActions called on ensemble ${this.toString}")
-    }
-
     actions {
       println(s"action ${this.toStringWithUtility}")
 
