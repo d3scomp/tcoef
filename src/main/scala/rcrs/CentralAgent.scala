@@ -31,8 +31,6 @@ class CentralAgent extends ScalaAgent {
       sendSubscribe(time, Constants.TO_STATION)
     }
 
-    // TODO - mobileAgent has processing of heard messages inside preActions (e.g. Registration.preActions)
-    // move it somewhere as well?
     if (time >= ignoreAgentCommandsUntil) {
       scenario.rcrsStep(time: Int, changes: ChangeSet, heard: List[Command])
       // TODO - only "mock" - positions of agent change during the simulation
