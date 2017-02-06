@@ -26,8 +26,7 @@ class CentralAgent extends ScalaAgent {
     val fireBrigadeComponents = createFireBrigadeComponents
 
     // TODO - inject components somehow?
-    scenario.components = List(component) ++ fireBrigadeComponents
-
+    scenario.components = component +: fireBrigadeComponents.toList
     scenario.init()
   }
 
