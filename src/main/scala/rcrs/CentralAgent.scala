@@ -80,6 +80,8 @@ class CentralAgent extends ScalaAgent {
       .map{_.asInstanceOf[T]}
   }
 
+  // TODO - central agent serves as fire station - but it probably should be just
+  // abstract class and code for fire station should be in derived class
   override protected def getRequestedEntityURNs: List[StandardEntityURN] = List(
     StandardEntityURN.FIRE_STATION
 //    StandardEntityURN.AMBULANCE_CENTRE,
