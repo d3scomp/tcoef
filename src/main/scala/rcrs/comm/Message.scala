@@ -16,6 +16,7 @@ object Message {
     val REG_REQUEST = Value(0)
     val REG_RESPONSE = Value(1)
     val EXPLORATION_STATUS = Value(2)
+    val CURRENT_POSITION = Value(3)
   }
 
   val shortIdCodec = uint4
@@ -26,7 +27,8 @@ object Message {
   val codec = choice(
     RegRequest.codec.upcast[Message],
     RegResponse.codec.upcast[Message],
-    ExplorationStatus.codec.upcast[Message]
+    ExplorationStatus.codec.upcast[Message],
+    CurrentPosition.codec.upcast[Message]
   )
 
   def decode(bytes: Array[Byte]): Message = {
