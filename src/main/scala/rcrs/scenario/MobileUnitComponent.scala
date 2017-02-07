@@ -4,9 +4,9 @@ import tcof.traits.map2d.Position
 import tcof.{Component, Universe}
 
 trait MobileUnitComponent {
-  this: Universe with ObservationSupport with RegistrationSupport with AreaExplorationSupport =>
+  this: Universe with ObservationSupport with RegistrationSupport with AreaExplorationSupport with PositionRegistrySupport =>
 
-  abstract class MobileUnit(var position: Position) extends Component with PositionAware with Registration with AreaExploration with Observation {
+  abstract class MobileUnit(var position: Position) extends Component with PositionAware with Registration with AreaExploration with Observation with PositionSending{
 
     val Stopped = State
 

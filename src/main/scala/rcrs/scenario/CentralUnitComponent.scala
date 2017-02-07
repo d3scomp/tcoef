@@ -4,7 +4,7 @@ import tcof.traits.map2d.Position
 import tcof.{Component, Universe}
 
 trait CentralUnitComponent {
-  this: Universe with RegistrationSupport with AreaExplorationSupport =>
+  this: Universe with RegistrationSupport with AreaExplorationSupport with PositionRegistrySupport =>
 
   abstract class CentralUnit(var position: Position) extends Component
     with PositionAware with AreaExplorationCentral with Registrator {

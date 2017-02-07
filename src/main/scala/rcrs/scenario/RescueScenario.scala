@@ -1,14 +1,15 @@
 package rcrs.scenario
 
 import rcrs.ScalaAgent
+import rescuecore2.worldmodel.EntityID
 import tcof._
 import tcof.traits.map2d.{Map2DTrait, Position}
-import rcrs.traits.RCRSConnectorTrait
+import rcrs.traits.{WithEntityID, RCRSConnectorTrait}
 import rcrs.traits.map2d.RCRSNodeStatus
 
 
 class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus]
-  with MobileUnitComponent with CentralUnitComponent with RegistrationSupport with AreaExplorationSupport with ObservationSupport {
+  with MobileUnitComponent with CentralUnitComponent with RegistrationSupport with PositionRegistrySupport with AreaExplorationSupport with ObservationSupport {
 
   this.agent = scalaAgent
 
@@ -20,12 +21,14 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
 //    name(s"AmbulanceTeam $no")
 //  }
 
-  class FireBrigade(no: Int, _position: Position) extends MobileUnit(_position) {
-    name(s"FireBrigade $no")
+  class FireBrigade(entityID: EntityID, _position: Position) extends MobileUnit(_position) with WithEntityID {
+    val id = entityID
+    name(s"FireBrigade $entityID")
   }
 
-  class FireStation(no: Int, _position: Position) extends CentralUnit(_position) {
-    name(s"FireStation $no")
+  class FireStation(entityID: EntityID, _position: Position) extends CentralUnit(_position) with WithEntityID {
+    val id = entityID
+    name(s"FireStation $entityID")
   }
 
   class ExplorationTeam(val zone: MapZone) extends Ensemble {

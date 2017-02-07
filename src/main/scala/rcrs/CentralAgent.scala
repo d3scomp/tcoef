@@ -12,21 +12,20 @@ import tcof.traits.map2d.Position
 class CentralAgent extends ScalaAgent {
   override type AgentEntityType = Building
 
-  val scenario = new RescueScenario(this)
+  val scenario: RescueScenario = new RescueScenario(this)
+  // initialization moved to postConnect (agent.model is null in constructor)
+  var component: scenario.FireStation = _
+  var fireBrigadeComponents: Iterable[scenario.FireBrigade] = _
 
   override protected def postConnect() {
     Logger.info(s"Central agent connected")
-    super.postConnect()
 
-    // TODO - numbers in components would differ on different CentralAgents
-    // - if this is a problem, they should be either obtained from some another (single)
-    //  central component or some convention for translation from (rescue) EntityID to
-    //  number should be used
-    val component = createFireStationComponent
-    val fireBrigadeComponents = createFireBrigadeComponents
-
-    // TODO - inject components somehow?
+    // component initialization
+    component = createFireStationComponent
+    fireBrigadeComponents = createFireBrigadeComponents
     scenario.components = component +: fireBrigadeComponents.toList
+
+    super.postConnect()
     scenario.init()
   }
 
@@ -41,6 +40,17 @@ class CentralAgent extends ScalaAgent {
 
     if (time >= ignoreAgentCommandsUntil) {
       scenario.rcrsStep(time: Int, changes: ChangeSet, heard: List[Command])
+
+      // solve component
+      component.init()
+
+      while (component.solve()) {
+        println(component.toStringWithUtility)
+      }
+
+      component.commit()
+
+      // solve root ensemble
 
       // TODO - central agent now handles whole rootEnsemble, but in rcrs
       // there may be multiple central agents
@@ -61,17 +71,15 @@ class CentralAgent extends ScalaAgent {
     * Creates FireBrigade components and assigns them position from configuration.
     */
   private def createFireBrigadeComponents: Iterable[scenario.FireBrigade] = {
-    val fireBrigades = findEntities[RescueFireBrigade](StandardEntityURN.FIRE_BRIGADE)
-
-    fireBrigades.zipWithIndex.map { case (fb, index) =>
-      new scenario.FireBrigade(index, Position(fb.getX, fb.getY))
+    findEntities[RescueFireBrigade](StandardEntityURN.FIRE_BRIGADE).map { fb =>
+      new scenario.FireBrigade(fb.getID, Position(fb.getX, fb.getY))
     }
   }
 
   private def createFireStationComponent: scenario.FireStation = {
     // TODO - assumption - exactly one fire station exists
     val fs = findEntities[FireStation](StandardEntityURN.FIRE_STATION).head
-    new scenario.FireStation(0, Position(fs.getX, fs.getY))
+    new scenario.FireStation(fs.getID, Position(fs.getX, fs.getY))
   }
 
   private def findEntities[T <: StandardEntity](urn: StandardEntityURN): Iterable[T] = {
