@@ -18,7 +18,8 @@ trait RegistrationSupport {
   trait Registration {
     this: MobileUnitComponent#MobileUnit =>
 
-    private var shortId = -1
+    val ShortIdUndefined = -1
+    private[scenario] var shortId = ShortIdUndefined
 
     val Register = State
 
@@ -26,19 +27,22 @@ trait RegistrationSupport {
       sensing.messages.foreach{
         case (RegResponse(id, sId), _) if id == agent.getID =>
           shortId = sId
-          Logger.info(s"Agent registered id: $id, shortId: $sId")
+          Logger.info(s"Agent ${agent.getID} registered id: $id, shortId: $sId")
 
         case _ =>
       }
     }
 
     constraints(
-      Register <-> (shortId == -1)
+      Register <-> (shortId == ShortIdUndefined)
     )
 
     actions {
       states.selectedMembers.foreach {
-        case Register => agent.sendSpeak(time, Constants.TO_STATION, Message.encode(new RegRequest()))
+        case Register =>
+          Logger.info(s"Sending registration request ${agent.getID}")
+          agent.sendSpeak(time, Constants.TO_STATION, Message.encode(new RegRequest()))
+
         case _ =>
       }
     }
@@ -54,6 +58,9 @@ trait RegistrationSupport {
 
     val agentsById = mutable.Map.empty[EntityID, AgentInfo]
     val agentsByShortId = mutable.Map.empty[Int, AgentInfo]
+
+    // NOTE: shortId should be used in communication from central -> agent
+    // in opposite direction the sender is known (getAgentID on speak message)
     var shortIdCounter = 0
 
     preActions {
@@ -80,6 +87,7 @@ trait RegistrationSupport {
 
           // TODO - is ok to send message in preactions? Or buffer message somewhere and send it in
           // actions?
+          Logger.info(s"Sending registration response to ${sender.getID} shortId: ${agentInfo.shortId}")
           agent.sendSpeak(time, Constants.TO_AGENTS, Message.encode(new RegResponse(id, agentInfo.shortId)))
 
         case _ =>
