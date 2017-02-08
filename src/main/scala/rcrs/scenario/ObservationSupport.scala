@@ -4,7 +4,7 @@ import tcof.traits.map2d.{Map2DTrait, Node}
 import rcrs.comm.{Constants, ExplorationStatus, Message}
 import rcrs.traits.RCRSConnectorTrait
 import rcrs.traits.map2d.{BuildingStatus, RCRSNodeStatus, RoadStatus}
-import rescuecore2.standard.entities.{Area, Building, Road}
+import rescuecore2.standard.entities.{StandardPropertyURN, Area, Building, Road}
 import tcof.Universe
 
 import scala.collection.JavaConverters._
@@ -14,7 +14,8 @@ trait ObservationSupport {
   this: Universe with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] =>
 
   /**
-    * Observes and records changes in its close vicinity. It checks the "changes" variable, which contains what the agent has seen. Based on this, it upddates the map and sends the changes to the central station.
+    * Observes and records changes in its close vicinity. It checks the "changes" variable, which contains
+    * what the agent has seen. Based on this, it updates the map and sends the changes to the central station.
     */
   trait Observation {
     this: MobileUnitComponent#MobileUnit =>
@@ -42,7 +43,10 @@ trait ObservationSupport {
 
             area match {
               case road: Road => statusChanges += changedNode -> RoadStatus(42 /* TODO */)
-              case building: Building => statusChanges += changedNode -> BuildingStatus(changes.getChangedProperty(entityId, "urn:rescuecore2.standard:property:temperature").getValue.asInstanceOf[Int], changes.getChangedProperty(entityId, "urn:rescuecore2.standard:property:brokenness").getValue.asInstanceOf[Int])
+              case building: Building =>
+                val temperature = changes.getChangedProperty(entityId, StandardPropertyURN.TEMPERATURE.toString).getValue.asInstanceOf[Int]
+                val brokenness = changes.getChangedProperty(entityId, StandardPropertyURN.BROKENNESS.toString).getValue.asInstanceOf[Int]
+                statusChanges += changedNode -> BuildingStatus(temperature, brokenness)
             }
 
           case _ =>
@@ -51,7 +55,10 @@ trait ObservationSupport {
 
       map.nodeStatus ++= statusChanges
 
-      val msg = new ExplorationStatus(agent.currentAreaId, statusChanges.collect { case (node, status) => map.closeAreaIDs(agent.currentAreaId).byAreaId(map.toArea(node).getID) -> status }.toMap)
+      val statusMap = statusChanges.collect {
+        case (node, status) => map.closeAreaIDs(agent.currentAreaId).byAreaId(map.toArea(node).getID) -> status
+      }.toMap
+      val msg = new ExplorationStatus(agent.currentAreaId, statusMap)
       agent.sendSpeak(time, Constants.TO_STATION, Message.encode(msg))
     }
   }
