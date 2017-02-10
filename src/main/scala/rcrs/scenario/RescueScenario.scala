@@ -101,7 +101,8 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
   // implies extinguishing the fire as soon as possible and therefore optimal tactics for
   // refilling water is needed.
   // In simplest case this means pouring as much water as possible (until fire is extinguished)
-  // in shortest time.
+  // in shortest time, which means minimizing the time spent with travel and refilling (and
+  // waiting in queue in case of hydrants).
   //
   // Parameters in simulator with default config values (can be changed):
   // - firefighter tank capacity (7500 in standard rcrs scenario)
@@ -119,6 +120,11 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
     // membership(
     // )
 
+    // utility(
+    // )
+
+    // actions {
+    // }
   }
 }
 
