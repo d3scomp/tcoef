@@ -90,5 +90,35 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
 
   val rootEnsemble = root(new System)
 
+
+  // Idea: For a given fire, set of firefighters, hydrants and refugee centers on the map computes
+  // the optimal tactics for capturing the fire.
+  // Each firefighter has tank with water which must be replenished once he runs out of water.
+  // Water can be replenished either at refugee center (faster, firefighters can replenish in parallel)
+  // or at hydrant (slower, only one firefighter at time, but hydrants are usually closer to fire and
+  // there are many of them).
+  // The ensemble should coordinate firefighters to minimize damage caused by fire, which usually
+  // implies extinguishing the fire as soon as possible and therefore optimal tactics for
+  // refilling water is needed.
+  // In simplest case this means pouring as much water as possible (until fire is extinguished)
+  // in shortest time.
+  //
+  // Parameters in simulator with default config values (can be changed):
+  // - firefighter tank capacity (7500 in standard rcrs scenario)
+  // - hydrant refill rate (150 per cycle)
+  // - refugee refill rate (500 per cycle)
+  // - firefighter extinguishing rate - amount of water poured to building (500 per cycle)
+  //
+  class ExtinguishEnsemble(val firePosition: Position) extends Ensemble {
+    name(s"ExtinguishTeam for fire at position $firePosition")
+
+    val refugeeCenters = ??? // TODO
+    val hydrants = ??? // TODO
+
+    // all fireBrigades assigned to this ensemble by some parent ensemble are members
+    // membership(
+    // )
+
+  }
 }
 
