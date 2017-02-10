@@ -91,18 +91,22 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
   val rootEnsemble = root(new System)
 
 
-  // Idea: For a given fire, set of firefighters, hydrants and refugee centers on the map computes
+  // Idea: For a given fire, set of fire brigades, hydrants and refugee centers on the map computes
   // the optimal tactics for capturing the fire.
-  // Each firefighter has tank with water which must be replenished once he runs out of water.
+  // Each fire brigade has tank with water which must be replenished once he runs out of water.
   // Water can be replenished either at refugee center (faster, firefighters can replenish in parallel)
   // or at hydrant (slower, only one firefighter at time, but hydrants are usually closer to fire and
   // there are many of them).
-  // The ensemble should coordinate firefighters to minimize damage caused by fire, which usually
+  // The ensemble should coordinate fire brigades to minimize damage caused by fire, which usually
   // implies extinguishing the fire as soon as possible and therefore optimal tactics for
   // refilling water is needed.
+  //
   // In simplest case this means pouring as much water as possible (until fire is extinguished)
   // in shortest time, which means minimizing the time spent with travel and refilling (and
   // waiting in queue in case of hydrants).
+  //
+  // Fire brigades can be (I think) assigned to refilling places greedily once they run out of water.
+  // The ensemble keeps the schedule when the refilling place is going to be available again.
   //
   // Parameters in simulator with default config values (can be changed):
   // - firefighter tank capacity (7500 in standard rcrs scenario)
@@ -120,6 +124,9 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
     // membership(
     // )
 
+    def timeSpent = ???
+
+    // utility =
     // utility(
     // )
 
