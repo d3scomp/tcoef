@@ -24,6 +24,11 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
   class FireBrigade(entityID: EntityID, _position: Position) extends MobileUnit(_position) with WithEntityID {
     val id = entityID
     name(s"FireBrigade $entityID")
+
+    // non-negative value signalizes that brigade needs to refill its tank or is currently refilling the tank
+    var amountToRefill: Int = _
+    var hydrantToRefill: Position = _
+    var assignedFire: Position = _
   }
 
   class FireStation(entityID: EntityID, _position: Position) extends CentralUnit(_position) with WithEntityID {
@@ -74,6 +79,10 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
 
     val explorationTeams = ensembles("explorationTeam", mapZones.map(new ExplorationTeam(_)))
 
+    // TODO - single ensemble for now, but can be divided into different ensembles
+    val hydrants: Seq[Position] = ??? // TODO
+    val refillEnsemble = ensembles("refill", new RefillCoordination(hydrants))
+
     membership(
       explorationTeams.map(_.fireBrigades).allDisjoint
       // && explorationTeams.map(_.ambulances).allDisjoint
@@ -101,10 +110,20 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
   // implies extinguishing the fire as soon as possible and therefore optimal tactics for
   // refilling water is needed.
   //
+  // This problem can be (as I think) divided into two subproblems - fire extinguishing + water refilling
+  //
+  // Fire extinguishing:
   // In simplest case this means pouring as much water as possible (until fire is extinguished)
   // in shortest time, which means minimizing the time spent with travel and refilling (and
   // waiting in queue in case of hydrants).
   //
+  // Water refilling:
+  // The ensemble coordinates brigades which need to refill (or are currently refilling)
+  // the tank. Ensemble computes optimal assignment of brigades to hydrants.
+  // Constraints - times spent on single hydrant doesn't overlap
+  // TODO - how to encode constraints to utility function?
+  //
+  // The ensemble coordinates brigades which need to refill the tank
   // Fire brigades can be (I think) assigned to refilling places greedily once they run out of water.
   // The ensemble keeps the schedule when the refilling place is going to be available again.
   //
@@ -114,21 +133,36 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
   // - refugee refill rate (500 per cycle)
   // - firefighter extinguishing rate - amount of water poured to building (500 per cycle)
   //
-  class ExtinguishEnsemble(val firePosition: Position) extends Ensemble {
-    name(s"ExtinguishTeam for fire at position $firePosition")
+  class RefillCoordination(val hydrantPositions: Seq[Position]) extends Ensemble {
+    name(s"RefillCoordination")
 
-    val refugeeCenters = ??? // TODO
-    val hydrants = ??? // TODO
+    val toRefill = role("fireBrigadesNeedingRefill", components.select[FireBrigade])
+    val hydrantRefillRate = 150
 
-    // all fireBrigades assigned to this ensemble by some parent ensemble are members
-    // membership(
-    // )
+    // does membership and utility condition make sense in this case?
+    // members = all firebrigades with flag set
+    // utility = function that minimizes travel (+ refill, ...) to available hydrants
+    // TODO - optimize globally across all fireBrigades so that even brigades
+    // that were previously assigned to hydrant could be rerouted?
+    membership(
+      // select only brigades that need refill
+      toRefill.all{_.amountToRefill > 0}
+    )
 
-    def timeSpent = ???
+    val moveSpeed: Int = ???
 
-    // utility =
-    // utility(
-    // )
+    def timeToRefillAndReturn(fireBrigade: FireBrigade, hydrant: Position): Int = {
+      val timeToReachHydrant = fireBrigade.position.distanceTo(hydrant).toInt / moveSpeed
+      val timeFromHydrantToFire = hydrant.distanceTo(fireBrigade.assignedFire).toInt / moveSpeed
+      val timeSpentWaitingForHydrant = ???
+      val timeSpentRefilling = fireBrigade.amountToRefill / hydrantRefillRate
+
+      timeToReachHydrant + timeSpentWaitingForHydrant + timeFromHydrantToFire + timeSpentRefilling
+    }
+
+    utility(
+      toRefill.sum(timeToRefillAndReturn(_, ???))
+    )
 
     // actions {
     // }
