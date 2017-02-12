@@ -154,7 +154,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
     def timeToRefillAndReturn(fireBrigade: FireBrigade, hydrant: Position): Int = {
       val timeToReachHydrant = fireBrigade.position.distanceTo(hydrant).toInt / moveSpeed
       val timeFromHydrantToFire = hydrant.distanceTo(fireBrigade.assignedFire).toInt / moveSpeed
-      val timeSpentWaitingForHydrant = ???
+      val timeSpentWaitingForHydrant: Int = ???
       val timeSpentRefilling = fireBrigade.amountToRefill / hydrantRefillRate
 
       timeToReachHydrant + timeSpentWaitingForHydrant + timeFromHydrantToFire + timeSpentRefilling
