@@ -8,32 +8,17 @@ import tcof._
 import tcof.traits.map2d.{Map2DTrait, Position}
 import rcrs.traits.{WithEntityID, RCRSConnectorTrait}
 import rcrs.traits.map2d.RCRSNodeStatus
-import tcof.State
 
 
-class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus]
-  with MobileUnitComponent with CentralUnitComponent with RegistrationSupport with PositionRegistrySupport with AreaExplorationSupport with ObservationSupport {
+class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] {
 
   this.agent = scalaAgent
 
-  class FireBrigade(entityID: EntityID, _position: Position) extends Component with PositionAware {
+  class FireBrigade(entityID: EntityID, _position: Position) extends Component with WithEntityID {
     val id = entityID
-
     var position: Position = _position
-    //name(s"FireBrigade $entityID")
-
-    // model states
-//    val Extinguish = State
-//    val Refill = State
-//    val Wait = State
-
-    //val Operation = StateOr(Extinguish, Refill, Wait)
-
     var fireToExtinguish: Position = _
 
-    // TODO - napsat ukazku komunikace (ilustrace)
-
-    // TODO - pridat komunikaci, pridat stavy, upravit zpravy
     val Extinguishing = State
     val OutOfWater = State
     val ToRefill = State // + refill
@@ -47,8 +32,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
     preActions {
       sensing.messages.foreach{
         case (Extinguish(id), _) if id == agent.getID =>
-          //Logger.info(s"Agent ${agent.getID} registered id: $id, shortId: $sId")
-          // set state to Extinguishing
+          Logger.info(s"Extinguish received by agent ${agent.getID}")
           shouldExtinguish = true
 
         case _ =>
@@ -81,20 +65,12 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
     }
   }
 
-  class FireStation(entityID: EntityID, _position: Position) extends CentralUnit(_position) with WithEntityID {
-    val id = entityID
-    name(s"FireStation $entityID")
+  class FireStation(entityID: EntityID, _position: Position) extends Component {
+    //val id = entityID
+    //name(s"FireStation $entityID")
   }
 
   class System extends RootEnsemble /* TODO - will extend just Ensamble */{
-    val mapZones = for {
-      xIdx <- 0 until 1
-      yIdx <- 0 until 2
-    } yield new MapZone(xIdx, yIdx, 0 /* time - 20 */)
-
-    // TODO - single ensemble for now, but can be divided into different ensembles
-    val hydrants: Seq[Position] = ??? // TODO
-    //val refillEnsemble = ensembles("refill", new RefillCoordination(hydrants))
 
     membership(
       ???
@@ -107,7 +83,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
       // nulls all assigned zones
       // TODO - the information about zones should be contained in ExplorationTeam ensamble
       // this leaks information about zones into parent ensamble
-      components.select[MobileUnit].map(_.areaExplorationAssignedZone = null)
+      //components.select[MobileUnit].map(_.areaExplorationAssignedZone = null)
     }
   }
 
@@ -155,6 +131,4 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
     }
   }
 
-
 }
-
