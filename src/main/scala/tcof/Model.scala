@@ -4,7 +4,7 @@ import rescuecore2.messages.Command
 import rescuecore2.worldmodel.ChangeSet
 import tcof.traits.Trait
 
-abstract class Universe extends Trait {
+abstract class Model extends Trait {
   private var _time = 0
   def time = _time
 
