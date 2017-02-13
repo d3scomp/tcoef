@@ -25,10 +25,14 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
     val id = entityID
     name(s"FireBrigade $entityID")
 
-    // non-negative value signalizes that brigade needs to refill its tank or is currently refilling the tank
-    var amountToRefill: Int = _
-    var hydrantToRefill: Position = _
-    var assignedFire: Position = _
+    // model states
+//    val Extinguish = State
+//    val Refill = State
+//    val Wait = State
+
+    //val Operation = StateOr(Extinguish, Refill, Wait)
+
+    var fireToExtinguish: Position
   }
 
   class FireStation(entityID: EntityID, _position: Position) extends CentralUnit(_position) with WithEntityID {
@@ -81,7 +85,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
 
     // TODO - single ensemble for now, but can be divided into different ensembles
     val hydrants: Seq[Position] = ??? // TODO
-    val refillEnsemble = ensembles("refill", new RefillCoordination(hydrants))
+    //val refillEnsemble = ensembles("refill", new RefillCoordination(hydrants))
 
     membership(
       explorationTeams.map(_.fireBrigades).allDisjoint
@@ -133,6 +137,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
   // - refugee refill rate (500 per cycle)
   // - firefighter extinguishing rate - amount of water poured to building (500 per cycle)
   //
+  /*
   class RefillCoordination(val hydrantPositions: Seq[Position]) extends Ensemble {
     name(s"RefillCoordination")
 
@@ -167,5 +172,48 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Universe with RCRSConnector
     // actions {
     // }
   }
+  */
+
+  // Maintains a queue of available brigades that are able to extinguish given fire.
+  // - When the brigade that extinguish the fire runs out of water, it sends a message
+  //   to ensemble and ensemble directs next brigade to start extinguishing.
+  //   Brigade automatically heads to the nearest refill station and refills its tank.
+  // - When the brigade returns after refilling, it sends a message that it is
+  //   available
+  class ExtinguishingCoordination(val fire: Position) extends Ensemble {
+
+    // membership
+    // - ensemble chooses brigade which will extinguish the fire
+    val brigades = role("fireBrigadesNeedingRefill", components.select[FireBrigade])
+
+    var currentlyExtinguishing: FireBrigade = _
+    val brigadesAvailable = List[FireBrigade]()
+    var selectBrigadeForExtinguishing = false
+
+    membership(
+      brigades.all(_.fireToExtinguish == fire)
+    )
+
+    // utility function not needed - TODO - can be ommited?
+    // utility {
+    // }
+
+    actions {
+      selectBrigadeForExtinguishingIfNeeded
+    }
+
+    def selectBrigadeForExtinguishingIfNeeded: Unit = {
+      if (selectBrigadeForExtinguishing && !brigadesAvailable.isEmpty) {
+        // TODO - send message to brigade
+
+        currentlyExtinguishing = brigadesAvailable.head
+        brigadesAvailable.drop(1)
+
+        selectBrigadeForExtinguishing = false
+      }
+    }
+  }
+
+
 }
 
