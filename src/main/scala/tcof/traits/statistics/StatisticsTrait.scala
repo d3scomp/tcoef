@@ -1,13 +1,13 @@
 package tcof.traits.statistics
 
-import tcof.{LogicalBoolean, Universe}
+import tcof.{LogicalBoolean, Model}
 import tcof.traits.Trait
 import org.apache.commons.math3.distribution.BinomialDistribution
 
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 
 trait StatisticsTrait extends Trait {
-  this: Universe =>
+  this: Model =>
 
   val defaultBucketSize = 1
   val defaultTimeOffset = 0
