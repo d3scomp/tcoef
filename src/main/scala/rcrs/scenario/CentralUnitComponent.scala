@@ -1,10 +1,10 @@
 package rcrs.scenario
 
 import tcof.traits.map2d.Position
-import tcof.{Component, Universe}
+import tcof.{Component, Model}
 
 trait CentralUnitComponent {
-  this: Universe with RegistrationSupport with AreaExplorationSupport with PositionRegistrySupport =>
+  this: Model with RegistrationSupport with AreaExplorationSupport with PositionRegistrySupport =>
 
   abstract class CentralUnit(var position: Position) extends Component
     with PositionAware with AreaExplorationCentral with Registrator {

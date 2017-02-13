@@ -1,14 +1,16 @@
 package rcrs.scenario
 
 import tcof.traits.map2d.Position
-import tcof.{Component, Universe}
+import tcof.{Component, Model}
 
 trait MobileUnitComponent {
-  this: Universe with ObservationSupport with RegistrationSupport with AreaExplorationSupport with PositionRegistrySupport =>
+  this: Model with ObservationSupport with RegistrationSupport with AreaExplorationSupport with PositionRegistrySupport =>
 
   abstract class MobileUnit(var position: Position) extends Component with PositionAware with Registration with AreaExploration with Observation with PositionSending{
 
-    val Stopped = State
+    //val Stopped = State
+
+    /*
 
     val Operation = StateOr(Register, AreaExploration, Stopped)
 
@@ -24,6 +26,8 @@ trait MobileUnitComponent {
         case _: tcof.State => 0
       }
     )
+    */
+
 
   }
 

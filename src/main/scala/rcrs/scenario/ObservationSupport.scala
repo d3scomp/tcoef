@@ -5,13 +5,13 @@ import rcrs.comm.{Constants, ExplorationStatus, Message}
 import rcrs.traits.RCRSConnectorTrait
 import rcrs.traits.map2d.{BuildingStatus, RCRSNodeStatus, RoadStatus}
 import rescuecore2.standard.entities.{StandardPropertyURN, Area, Building, Road}
-import tcof.Universe
+import tcof.Model
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 trait ObservationSupport {
-  this: Universe with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] =>
+  this: Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] =>
 
   /**
     * Observes and records changes in its close vicinity. It checks the "changes" variable, which contains
@@ -53,6 +53,8 @@ trait ObservationSupport {
         }
       }
 
+      // TODO - isn't nodeStatus redundant? Informarmation about temperature, brokeness should be available in agent's
+      // world model
       map.nodeStatus ++= statusChanges
 
       val statusMap = statusChanges.collect {

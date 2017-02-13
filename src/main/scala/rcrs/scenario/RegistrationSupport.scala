@@ -5,12 +5,12 @@ import rcrs.traits.RCRSConnectorTrait
 import rescuecore2.log.Logger
 import rescuecore2.standard.entities.StandardEntity
 import rescuecore2.worldmodel.EntityID
-import tcof.Universe
+import tcof.Model
 
 import scala.collection.mutable
 
 trait RegistrationSupport {
-  this: Universe with RCRSConnectorTrait =>
+  this: Model with RCRSConnectorTrait =>
 
   /**
     * Obtains a shortId from the central server.

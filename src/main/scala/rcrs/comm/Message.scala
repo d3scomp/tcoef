@@ -17,6 +17,8 @@ object Message {
     val REG_RESPONSE = Value(1)
     val EXPLORATION_STATUS = Value(2)
     val CURRENT_POSITION = Value(3)
+    val NO_WATER = Value(4)
+    val EXTINGUISH = Value(5)
   }
 
   val shortIdCodec = uint4

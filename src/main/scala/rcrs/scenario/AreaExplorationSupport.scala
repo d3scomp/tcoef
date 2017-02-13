@@ -6,10 +6,10 @@ import tcof.traits.map2d.{Map2D, Map2DTrait, Node, Position}
 import rcrs.traits.RCRSConnectorTrait
 import rcrs.traits.map2d.RCRSNodeStatus
 import rescuecore2.standard.entities.Human
-import tcof.Universe
+import tcof.Model
 
 trait AreaExplorationSupport {
-  this: Universe with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] =>
+  this: Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] =>
 
   case class MapZone(xIdx: Int, yIdx: Int, maxLastVisitTime: Int) {
     override def toString: String = s"MapZone($xIdx, $yIdx)"

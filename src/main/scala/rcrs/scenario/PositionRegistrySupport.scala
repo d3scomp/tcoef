@@ -5,10 +5,10 @@ import rcrs.traits.{WithEntityID, RCRSConnectorTrait}
 import rescuecore2.log.Logger
 import rescuecore2.worldmodel.EntityID
 import tcof.traits.map2d.Position
-import tcof.{WithActionsInComponent, Universe, Component}
+import tcof.{WithActionsInComponent, Model, Component}
 
 trait PositionRegistrySupport {
-  this: Universe with RCRSConnectorTrait =>
+  this: Model with RCRSConnectorTrait =>
 
   trait PositionSending {
     this: MobileUnitComponent#MobileUnit =>

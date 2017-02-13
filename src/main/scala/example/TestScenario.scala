@@ -15,7 +15,7 @@ import example.MapNodeKind.{Building, MapNodeKind}
 
 class MapNodeStatus(var kind: MapNodeKind, var isBurning: Boolean, var burnoutLevel: Double)
 
-class TestScenario extends Universe with Map2DTrait[MapNodeStatus] with StateSpaceTrait with StatisticsTrait {
+class TestScenario extends Model with Map2DTrait[MapNodeStatus] with StateSpaceTrait with StatisticsTrait {
 
   type MapNode = Node[MapNodeStatus]
 
