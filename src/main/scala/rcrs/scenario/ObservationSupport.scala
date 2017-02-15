@@ -5,7 +5,7 @@ import rcrs.comm.{Constants, ExplorationStatus, Message}
 import rcrs.traits.RCRSConnectorTrait
 import rcrs.traits.map2d.{BuildingStatus, RCRSNodeStatus, RoadStatus}
 import rescuecore2.standard.entities.{StandardPropertyURN, Area, Building, Road}
-import tcof.Model
+import tcof.{Component, Model}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -18,7 +18,7 @@ trait ObservationSupport {
     * what the agent has seen. Based on this, it updates the map and sends the changes to the central station.
     */
   trait Observation {
-    this: MobileUnitComponent#MobileUnit =>
+    this: Component =>
 
     val Observation = State
 

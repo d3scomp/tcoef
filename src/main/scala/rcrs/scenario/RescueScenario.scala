@@ -1,6 +1,6 @@
 package rcrs.scenario
 
-import rcrs.ScalaAgent
+import rcrs.{comm, ScalaAgent}
 import rcrs.comm._
 import rescuecore2.log.Logger
 import rescuecore2.worldmodel.EntityID
@@ -10,64 +10,101 @@ import rcrs.traits.{WithEntityID, RCRSConnectorTrait}
 import rcrs.traits.map2d.RCRSNodeStatus
 
 
-class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] {
+class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] with ObservationSupport {
 
   this.agent = scalaAgent
 
-  class FireBrigade(entityID: EntityID, _position: Position) extends Component with WithEntityID {
+  class FireBrigade(entityID: EntityID, _position: Position) extends Component with WithEntityID with Observation {
     val id = entityID
     var position: Position = _position
-    var fireToExtinguish: Position = _
+    var assignedFire: Position = _ // assigned by message send by some ensemble
+    var selectedForExtinguishing: Boolean = _
 
-    val Extinguishing = State
-    val OutOfWater = State
-    val ToRefill = State // + refill
-    val ToFire = State
-    val Ready = State
+    val Refilling = State // includes heading to refill point
+    val Extinguishing = State // includes heading to fire and waiting for selection near fire
+    val FireFighting = StateAnd(StateOr(Refilling, Extinguishing), Observation) // added Observation to propagate knowledge to ensemble
+    val Idle = State // TODO - model Idle explicitly? Or represent it by fact that Firefighting is not selected?
+    val Operational = StateOr(FireFighting, Idle) // top-level state
 
-    // no constraints so far - TODO - can be ommited?
-//    constraints(
-//    )
+    constraints(
+      FireFighting <-> (assignedFire != null) &&
+      Refilling -> (refillingAtRefillPlace || tankEmpty) &&
+      Extinguishing -> (!tankEmpty)
+    )
 
     preActions {
       sensing.messages.foreach{
+        // Knowledge propagated from component to ensemble:
+        // - buildings on fire - in ObservationSupport
+        // - current position of agent - TODO add message or use just areaId from ExplorationStatus?
+        // - water level - add message?
+        // - switched from extinguishing to refilling - deduced from water level
+        //
+        // From ensemble to component:
+        // - selectedForExtinguishing - add message?
+        // - fire extinguished - detected from world model, passed by ObservationSupport
+
         case (Extinguish(id), _) if id == agent.getID =>
           Logger.info(s"Extinguish received by agent ${agent.getID}")
-          shouldExtinguish = true
 
         case _ =>
       }
     }
-
-    constraints(
-      Extinguishing <-> shouldExtinguish &&
-      OutOfWater <-> noWater &&
-      ToRefill <-> headingToRefill &&
-      Ready <-> !noWater && !shouldExtinguish
-    )
-
-    // action
-    def extinguish = ???
-    var noWater: Boolean = ???
-    var shouldExtinguish: Boolean = ???
-    var headingToRefill: Boolean = ???
 
     actions {
       states.selectedMembers.foreach {
-        case OutOfWater =>
-          agent.sendSpeak(time, Constants.TO_STATION, Message.encode(new NoWater()))
-
-        case ToRefill =>
-          // TODO - move to nearest water source
-
+        case Extinguishing =>
+          extinguishAction
+        case Refilling =>
+          refillAction
         case _ =>
       }
     }
+
+    def tankEmpty: Boolean = ???
+
+    def refillingAtRefillPlace: Boolean = ???
+
+    def refillAction = {
+      if (refillingAtRefillPlace) {
+        // TODO - rest? This means that brigade cannot extinguish during refill (which is possible in rcrs)
+      } else {
+        // TODO - move to refill point
+      }
+      ???
+    }
+
+    def extinguishAction = {
+      if (isNearAssignedFire) {
+        if (selectedForExtinguishing) {
+          // TODO - extinguish
+        } else {
+          // TODO - wait
+        }
+      } else {
+        // TODO - move brigade to assigned fire
+      }
+      ???
+    }
+
+    def isNearAssignedFire: Boolean = {
+      ???
+    }
+
   }
 
   class FireStation(entityID: EntityID, _position: Position) extends Component {
     //val id = entityID
     //name(s"FireStation $entityID")
+
+    preActions {
+//      sensing.messages.foreach{
+//        case (Arrived(), _) =>
+//        case (NoWater(), _) =>
+//        case (FireExtinguished(), _) =>
+//        case _ =>
+//      }
+    }
   }
 
   class System extends RootEnsemble /* TODO - will extend just Ensamble */{
@@ -108,7 +145,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
     var selectBrigadeForExtinguishing = false
 
     membership(
-      brigades.all(_.fireToExtinguish == fire)
+      brigades.all(_.assignedFire == fire)
     )
 
     // utility function not needed - TODO - can be ommited?
@@ -121,7 +158,8 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
 
     def selectBrigadeForExtinguishingIfNeeded: Unit = {
       if (selectBrigadeForExtinguishing && !brigadesAvailable.isEmpty) {
-        // TODO - send message to brigade
+        // TODO - send message to brigade - but messagees are received
+        // by coordinator. Coordinator just sets a flag?
 
         currentlyExtinguishing = brigadesAvailable.head
         brigadesAvailable.drop(1)
