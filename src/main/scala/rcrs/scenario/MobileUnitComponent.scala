@@ -6,7 +6,7 @@ import tcof.{Component, Model}
 trait MobileUnitComponent {
   this: Model with ObservationSupport with RegistrationSupport with AreaExplorationSupport with PositionRegistrySupport =>
 
-  abstract class MobileUnit(var position: Position) extends Component with PositionAware with Registration with AreaExploration with Observation with PositionSending{
+  abstract class MobileUnit(var position: Position) extends Component with PositionAware with Registration with AreaExploration with Observation {
 
     //val Stopped = State
 
