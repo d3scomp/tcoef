@@ -15,27 +15,19 @@ class FireBrigadeAgent extends ScalaAgent {
   val component = new scenario.FireBrigade(getID, getPosition)
   scenario.components = List(component)
 
-  /*
   private val MAX_WATER_KEY = "fire.tank.maximum"
   private val MAX_DISTANCE_KEY = "fire.extinguish.max-distance"
   private val MAX_POWER_KEY = "fire.extinguish.max-sum"
 
-  private var maxWater: Int = _
-  private var maxDistance: Int = _
-  private var maxPower: Int = _
-*/
+  lazy val maxWater = config.getIntValue(MAX_WATER_KEY)
+  lazy val maxDistance = config.getIntValue(MAX_DISTANCE_KEY)
+  lazy val maxPower = config.getIntValue(MAX_POWER_KEY)
 
   override protected def postConnect() {
     super.postConnect()
     scenario.init()
 
-    /*
-    maxWater = config.getIntValue(MAX_WATER_KEY)
-    maxDistance = config.getIntValue(MAX_DISTANCE_KEY)
-    maxPower = config.getIntValue(MAX_POWER_KEY)
-
     Logger.info(s"Fire brigade agent connected: max extinguish distance = $maxDistance, max power = $maxPower, max tank = $maxWater")
-    */
   }
 
   override def think(time: Int, changes: ChangeSet, heard: List[Command]): Unit = {

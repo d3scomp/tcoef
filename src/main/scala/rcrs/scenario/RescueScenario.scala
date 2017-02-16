@@ -1,6 +1,6 @@
 package rcrs.scenario
 
-import rcrs.{comm, ScalaAgent}
+import rcrs.{FireBrigadeAgent, comm, ScalaAgent}
 import rcrs.comm._
 import rescuecore2.log.Logger
 import rescuecore2.worldmodel.EntityID
@@ -60,13 +60,14 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
       }
     }
 
-    def tankEmpty: Boolean = ???
+    def tankEmpty: Boolean = getWater == 0
 
     def refillingAtRefillPlace: Boolean = ???
 
     def refillAction = {
       if (refillingAtRefillPlace) {
         // TODO - rest? This means that brigade cannot extinguish during refill (which is possible in rcrs)
+        agent.sendRest(time)
       } else {
         // TODO - move to refill point
       }
@@ -78,7 +79,8 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
         if (selectedForExtinguishing) {
           // TODO - extinguish
         } else {
-          // TODO - wait
+          // wait
+          agent.sendRest(time)
         }
       } else {
         // TODO - move brigade to assigned fire
@@ -90,6 +92,8 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
       ???
     }
 
+    def getWater: Int = agentAs[rescuecore2.standard.entities.FireBrigade].me.getWater
+    def maxWater: Int = agent.asInstanceOf[FireBrigadeAgent].maxWater
   }
 
   class FireStation(entityID: EntityID, _position: Position) extends Component with ObservationReceiver with PositionReceiver {
@@ -126,22 +130,19 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
   val rootEnsemble = root(new System)
 
   // Maintains a queue of available brigades that are able to extinguish given fire.
-  // - When the brigade that extinguish the fire runs out of water, it sends a message
-  //   to ensemble and ensemble directs next brigade to start extinguishing.
-  //   Brigade automatically heads to the nearest refill station and refills its tank.
-  // - When the brigade returns after refilling, it sends a message that it is
-  //   available
+  // - When the brigade that extinguish the fire runs out of water, the ensemble
+  //   directs next brigade to start extinguishing.
+  //   Brigade with empty tank automatically heads to the nearest refill station and
+  //   refills its tank.
   class ExtinguishingCoordination(val fire: Position) extends Ensemble {
 
     // membership
     // - ensemble chooses brigade which will extinguish the fire
-    val brigades = role("fireBrigadesNeedingRefill", components.select[FireBrigade])
+    val brigades = role("extinguishingCoordination", components.select[FireBrigade])
 
     var currentlyExtinguishing: FireBrigade = _
     val brigadesAvailable = List[FireBrigade]()
     val brigadesRefilling = List[FireBrigade]()
-
-    var selectBrigadeForExtinguishing = false
 
     membership(
       brigades.all(_.assignedFire == fire)
@@ -156,15 +157,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
     }
 
     def selectBrigadeForExtinguishingIfNeeded: Unit = {
-      if (selectBrigadeForExtinguishing && !brigadesAvailable.isEmpty) {
-        // TODO - send message to brigade - but messagees are received
-        // by coordinator. Coordinator just sets a flag?
-
-        currentlyExtinguishing = brigadesAvailable.head
-        brigadesAvailable.drop(1)
-
-        selectBrigadeForExtinguishing = false
-      }
+      // currentlyExtinguishing has no water - select nearest brigade with most water
     }
   }
 
