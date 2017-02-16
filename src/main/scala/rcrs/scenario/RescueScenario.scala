@@ -93,7 +93,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
 
   }
 
-  class FireStation(entityID: EntityID, _position: Position) extends Component {
+  class FireStation(entityID: EntityID, _position: Position) extends Component with ObservationReceiver {
     //val id = entityID
     //name(s"FireStation $entityID")
 

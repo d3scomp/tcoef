@@ -1,7 +1,8 @@
 package rcrs.scenario
 
+import rescuecore2.worldmodel.EntityID
 import tcof.traits.map2d.{Map2DTrait, Node}
-import rcrs.comm.{Constants, ExplorationStatus, Message}
+import rcrs.comm._
 import rcrs.traits.RCRSConnectorTrait
 import rcrs.traits.map2d.{BuildingStatus, RCRSNodeStatus, RoadStatus}
 import rescuecore2.standard.entities.{StandardPropertyURN, Area, Building, Road}
@@ -42,7 +43,9 @@ trait ObservationSupport {
             val changedNode = map.toNode(area.getID)
 
             area match {
-              case road: Road => statusChanges += changedNode -> RoadStatus(42 /* TODO */)
+              case road: Road =>
+                statusChanges += changedNode -> RoadStatus(42 /* TODO */)
+
               case building: Building =>
                 val temperature = changes.getChangedProperty(entityId, StandardPropertyURN.TEMPERATURE.toString).getValue.asInstanceOf[Int]
                 val brokenness = changes.getChangedProperty(entityId, StandardPropertyURN.BROKENNESS.toString).getValue.asInstanceOf[Int]
@@ -53,8 +56,8 @@ trait ObservationSupport {
         }
       }
 
-      // TODO - isn't nodeStatus redundant? Informarmation about temperature, brokeness should be available in agent's
-      // world model
+      // TODO - isn't nodeStatus redundant? Informarmation about temperature, brokeness
+      // should be available in agent's world model
       map.nodeStatus ++= statusChanges
 
       val statusMap = statusChanges.collect {
@@ -65,4 +68,28 @@ trait ObservationSupport {
     }
   }
 
+  trait ObservationReceiver {
+    this: Component =>
+
+    preActions {
+      sensing.messages.foreach {
+        case (ExplorationStatus(currentAreaId, statusMap), speak) =>
+          updateWorldInfo(statusMap)
+
+        case _ =>
+      }
+    }
+
+    def updateWorldInfo(statusMap: Map[Int, RCRSNodeStatus]) = {
+      for ((id, nodeStatus) <- statusMap) {
+        nodeStatus match {
+          case BuildingStatus(temperature, brokenness) =>
+            val entityID = new EntityID(id)
+            map.toNode(entityID).status = nodeStatus
+
+          case _ =>
+        }
+      }
+    }
+  }
 }
