@@ -10,11 +10,10 @@ import rcrs.traits.{WithEntityID, RCRSConnectorTrait}
 import rcrs.traits.map2d.RCRSNodeStatus
 
 
-class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] with ObservationSupport {
-
+class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] with ObservationSupport with PositionRegistrySupport {
   this.agent = scalaAgent
 
-  class FireBrigade(entityID: EntityID, _position: Position) extends Component with WithEntityID with Observation {
+  class FireBrigade(entityID: EntityID, _position: Position) extends Component with WithEntityID with Observation with PositionSending {
     val id = entityID
     var position: Position = _position
     var assignedFire: Position = _ // assigned by message send by some ensemble
@@ -22,7 +21,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
 
     val Refilling = State // includes heading to refill point
     val Extinguishing = State // includes heading to fire and waiting for selection near fire
-    val FireFighting = StateAnd(StateOr(Refilling, Extinguishing), Observation) // added Observation to propagate knowledge to ensemble
+    val FireFighting = StateAnd(StateOr(Refilling, Extinguishing), Observation, SendPosition) // added Observation to propagate knowledge to ensemble
     val Idle = State // TODO - model Idle explicitly? Or represent it by fact that Firefighting is not selected?
     val Operational = StateOr(FireFighting, Idle) // top-level state
 
@@ -36,7 +35,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
       sensing.messages.foreach{
         // Knowledge propagated from component to ensemble:
         // - buildings on fire - in ObservationSupport
-        // - current position of agent - TODO add message or use just areaId from ExplorationStatus?
+        // - current position of agent - in PositionRegistrySupport
         // - water level - add message?
         // - switched from extinguishing to refilling - deduced from water level
         //
@@ -93,7 +92,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
 
   }
 
-  class FireStation(entityID: EntityID, _position: Position) extends Component with ObservationReceiver {
+  class FireStation(entityID: EntityID, _position: Position) extends Component with ObservationReceiver with PositionReceiver {
     //val id = entityID
     //name(s"FireStation $entityID")
 

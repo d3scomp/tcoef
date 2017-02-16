@@ -11,44 +11,32 @@ trait PositionRegistrySupport {
   this: Model with RCRSConnectorTrait =>
 
   trait PositionSending {
-    this: MobileUnitComponent#MobileUnit =>
+    this: Component with WithEntityID =>
 
-    var counter = 0
-    val period = 2
-
-    // TODO - is sending a position an action? Should it have its own state?
-    // In rcrs can agent perform in one step both
-    // - sending a message and e.g. moving to some location
     val SendPosition = State
 
-    preActions {
-      counter = (counter + 1) % period
-    }
-
-    constraints(
-      SendPosition <-> (counter == 0 && shortId != ShortIdUndefined)
-    )
-
     actions {
-      // TODO - why do I iterate selectedMembers? (Also in Registration)
       states.selectedMembers.foreach {
-        case SendPosition =>
-          val x = agent.getPosition.x.toInt
-          val y = agent.getPosition.y.toInt
-          val message = Message.encode(new CurrentPosition(x, y))
-          Logger.info(s"Sending position of component: $shortId, x=$x y=$y")
-          agent.sendSpeak(time, Constants.TO_STATION, message)
-
+        case SendPosition => sendPositionAction()
         case _ =>
       }
+    }
+
+    def sendPositionAction() = {
+      val x = agent.getPosition.x.toInt
+      val y = agent.getPosition.y.toInt
+      val message = Message.encode(new CurrentPosition(x, y))
+      Logger.info(s"Sending position of component: ${id}, x=$x y=$y")
+      agent.sendSpeak(time, Constants.TO_STATION, message)
     }
   }
 
   // TODO - make trait more generic? Use type from WithId?
-  trait PositionRegistry {
-    this: WithActionsInComponent with RegistrationSupport#Registrator =>
+  trait PositionReceiver {
+    this: WithActionsInComponent =>
 
-    // initialization is delayed to preactions (components field is assigned later in )
+    // mapping EntityID -> PositionAware for fast lookup
+    // initialization is delayed to preactions (components field is assigned later)
     var positionRegistry: Map[EntityID, PositionAware] = null
 
     preActions {
