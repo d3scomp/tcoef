@@ -167,20 +167,23 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
     // }
 
     actions {
+      checkCurrentlyExtinguishingBrigade
       selectBrigadeForExtinguishingIfNeeded
     }
 
+    def checkCurrentlyExtinguishingBrigade: Unit = {
+      if (currentlyExtinguishing != null && currentlyExtinguishing.waterLevel == 0) {
+        currentlyExtinguishing = null
+      }
+    }
+
     def selectBrigadeForExtinguishingIfNeeded: Unit = {
-      /*
-      // currentlyExtinguishing has no water - select nearest brigade with most water
-      if (currentlyExtinguishing != null && currentlyExtinguishing.) {
-
-      }
-
       if (currentlyExtinguishing == null) {
+        // select new brigade
 
+
+        // send message
       }
-      */
     }
   }
 
