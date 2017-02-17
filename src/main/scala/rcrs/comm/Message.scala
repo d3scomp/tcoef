@@ -17,7 +17,8 @@ object Message {
     val REG_RESPONSE = Value(1)
     val EXPLORATION_STATUS = Value(2)
     val CURRENT_POSITION = Value(3)
-    val EXTINGUISH = Value(5)
+    val EXTINGUISH = Value(4)
+    val FIRE_BRIGADE_STATUS = Value(5)
   }
 
   val shortIdCodec = uint4

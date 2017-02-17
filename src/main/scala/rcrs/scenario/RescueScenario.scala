@@ -10,18 +10,18 @@ import rcrs.traits.{WithEntityID, RCRSConnectorTrait}
 import rcrs.traits.map2d.RCRSNodeStatus
 
 
-class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] with ObservationSupport with PositionRegistrySupport {
+class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] with MobileUnitComponent with CentralUnitComponent with ObservationSupport with PositionRegistrySupport {
   this.agent = scalaAgent
 
-  class FireBrigade(entityID: EntityID, _position: Position) extends Component with WithEntityID with Observation with PositionSending {
-    val id = entityID
-    var position: Position = _position
+  class FireBrigade(val id: EntityID, position: Position) extends MobileUnit(position) {
     var assignedFire: Position = _ // assigned by message send by some ensemble
-    var selectedForExtinguishing: Boolean = _
+    var waterLevel: Int = _
+    var selectedForExtinguishing: Boolean = false
 
     val Refilling = State // includes heading to refill point
     val Extinguishing = State // includes heading to fire and waiting for selection near fire
-    val FireFighting = StateAnd(StateOr(Refilling, Extinguishing), Observation, SendPosition) // added Observation to propagate knowledge to ensemble
+    val SendFireBrigadeStatus = State
+    val FireFighting = StateAnd(StateOr(Refilling, Extinguishing), Observation, SendPosition, SendFireBrigadeStatus) // added Observation to propagate knowledge to ensemble
     val Idle = State // TODO - model Idle explicitly? Or represent it by fact that Firefighting is not selected?
     val Operational = StateOr(FireFighting, Idle) // top-level state
 
@@ -56,6 +56,8 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
           extinguishAction
         case Refilling =>
           refillAction
+        case SendFireBrigadeStatus =>
+          sendStatusAction
         case _ =>
       }
     }
@@ -88,6 +90,13 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
       ???
     }
 
+    def sendStatusAction = {
+      val waterLevel: Int = agentAs[rescuecore2.standard.entities.FireBrigade].me.getWater
+      val message = Message.encode(new FireBrigadeStatus(waterLevel))
+      Logger.info(s"Sending status of firebrigade: ${id}, water=$waterLevel")
+      agent.sendSpeak(time, Constants.TO_STATION, message)
+    }
+
     def isNearAssignedFire: Boolean = {
       ???
     }
@@ -96,17 +105,22 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
     def maxWater: Int = agent.asInstanceOf[FireBrigadeAgent].maxWater
   }
 
-  class FireStation(entityID: EntityID, _position: Position) extends Component with ObservationReceiver with PositionReceiver {
-    //val id = entityID
-    //name(s"FireStation $entityID")
+  class FireStation(entityID: EntityID, position: Position) extends CentralUnit(position) /*with ObservationReceiver with PositionReceiver*/ {
+    var fireBrigadeRegistry: Map[EntityID, FireBrigade] = null
 
     preActions {
-//      sensing.messages.foreach{
-//        case (Arrived(), _) =>
-//        case (NoWater(), _) =>
-//        case (FireExtinguished(), _) =>
-//        case _ =>
-//      }
+      if (fireBrigadeRegistry == null) {
+        fireBrigadeRegistry = components.collect{ case fb: FireBrigade => fb}
+          .map{ fb => fb.id -> fb}.toMap
+      }
+
+      sensing.messages.foreach{
+        case (FireBrigadeStatus(waterLevel), message) =>
+          val fb = fireBrigadeRegistry(message.getAgentID)
+          fb.waterLevel = waterLevel
+
+        case _ =>
+      }
     }
   }
 
@@ -157,7 +171,16 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
     }
 
     def selectBrigadeForExtinguishingIfNeeded: Unit = {
+      /*
       // currentlyExtinguishing has no water - select nearest brigade with most water
+      if (currentlyExtinguishing != null && currentlyExtinguishing.) {
+
+      }
+
+      if (currentlyExtinguishing == null) {
+
+      }
+      */
     }
   }
 
