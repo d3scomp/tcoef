@@ -3,10 +3,11 @@ package rcrs.scenario
 import rcrs.ScalaAgent
 import rcrs.comm._
 import rcrs.traits.RCRSConnectorTrait
-import rcrs.traits.map2d.RCRSNodeStatus
+import rcrs.traits.map2d.{BuildingStatus, RCRSNodeStatus}
+import rescuecore2.standard.entities.Building
 import rescuecore2.worldmodel.EntityID
 import tcof._
-import tcof.traits.map2d.Map2DTrait
+import tcof.traits.map2d.{Node, Map2DTrait}
 
 class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] {
   this.agent = scalaAgent
@@ -58,9 +59,6 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     import FireBrigade.{Idle, Protecting}
 
     membership(
-      // TODO - kde se zjisti uhaseni pozaru? Posilaji agenti svuj changeset?
-      // Protecting - stav definovany ve FireBrigade nebo v nejakem traitu?
-
       brigades.all(brigade => (brigade in Idle) || (brigade in Protecting) && brigade.fireLocation == fireLocation) &&
               brigades.cardinality >= 2 && brigades.cardinality <= 3
     )
@@ -81,14 +79,21 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
   }
 
   class FireCoordination(coordinator: FireStation) extends RootEnsemble /* TODO - will extend just Ensamble */ {
-    var buildingsOnFire: Seq[EntityID] = ??? // TODO
 
-    // kazde budove priradi 2-3 agenty, tj. muzu mit spoustu hasicu, kteri nejsou nikam prirazeni
+    val buildingsOnFire: Seq[EntityID] = findBuildingsOnFire(map.nodes)
+
+    // assigns 2-3 brigades to each building - there can be many brigades unassigned
     val extinguishTeams = ensembles(buildingsOnFire.map(new ExtinguishTeam(coordinator, _)))
     val protectionTeams = ensembles(buildingsOnFire.map(new ProtectionTeam(coordinator, _)))
 
     membership(
       (extinguishTeams.map(_.brigades) ++ protectionTeams.map(_.brigades)).allDisjoint
     )
+
+    def findBuildingsOnFire(nodes: Seq[Node[RCRSNodeStatus]]): Seq[EntityID] = {
+      nodes.map{map.toArea(_)}
+        .collect{ case building: Building if building.isOnFire => building }
+        .map(_.getID)
+    }
   }
 }
