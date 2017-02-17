@@ -180,11 +180,23 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
     def selectBrigadeForExtinguishingIfNeeded: Unit = {
       if (currentlyExtinguishing == null) {
         // select new brigade
+        brigades.selectedMembers.headOption match {
+          case Some(fb) =>
+            currentlyExtinguishing = fb
+            // send message - TODO - according to TB the ensemble shouldn't send message
+            sendExtinguishAction(fb.id)
 
-
-        // send message
+          case None =>
+        }
       }
     }
+
+    def sendExtinguishAction(id: EntityID) = {
+      val message = Message.encode(new Extinguish(id))
+      Logger.info(s"Sending extinguish to ${id}")
+      agent.sendSpeak(time, Constants.TO_AGENTS, message)
+    }
+
   }
 
 }
