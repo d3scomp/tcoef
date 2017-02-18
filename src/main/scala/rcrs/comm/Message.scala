@@ -19,6 +19,7 @@ object Message {
     val CURRENT_POSITION = Value(3)
     val EXTINGUISH = Value(4)
     val FIRE_BRIGADE_STATUS = Value(5)
+    val FIRE_BRIGADE_TO_INITIATOR = Value(6)
   }
 
   val shortIdCodec = uint4

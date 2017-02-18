@@ -3,34 +3,81 @@ package rcrs.scenario
 import rcrs.ScalaAgent
 import rcrs.comm._
 import rcrs.traits.RCRSConnectorTrait
-import rcrs.traits.map2d.{BuildingStatus, RCRSNodeStatus}
+import rcrs.traits.map2d.RCRSNodeStatus
 import rescuecore2.standard.entities.Building
 import rescuecore2.worldmodel.EntityID
 import tcof._
-import tcof.traits.map2d.{Node, Map2DTrait}
+import tcof.traits.map2d.{Map2DTrait, Node, Position}
 
 class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] {
   this.agent = scalaAgent
 
-  object FireBrigade extends Component {
-    val Idle = State
-    val Protecting = State
-    val Refilling = State
+  object FireBrigade {
+    /** Representation of the component's state, transferred between component and ensemble
+      * and used in computations on the initiator of the ensemble. */
+    object MirrorState extends Enumeration {
+      type MirrorState = Value
+      val IdleMirror, ProtectingMirror, RefillingMirror = Value
+    }
   }
 
   class FireBrigade(val entityID: EntityID) extends Component {
-    def in(state: State): Boolean = states.selectedMembers.exists(_ == state)
-    //…
+    import FireBrigade.MirrorState._
 
-    var protectAroundFire: EntityID = _
-    var fireLocation: EntityID = _
+    // information transferred between initiator and component - start
+
+    // fb -> initiator - fb changes state to Refilling when runs out of water
+    // initiator -> fb - ensemble changes state from Idle to Protecting
+    var brigadeState: MirrorState = IdleMirror
+
+    // fb -> initiator - current fb position
+    var brigadePosition: Position = getInitPosition(entityID)
+
+    // fb -> initiator - fire is extinguished or when refilling (sets to null)
+    // initiator -> fb - assigns fire
+    var assignedFireLocation: EntityID = null
+
+    // fb -> initiator
+    //var waterLevel: Int = getInitWaterLevel(entityID)
+
+    // information transferred between initiator and component - end
+
+
+    // states are used only for resolution in component, not propagated to ensemble
+    val Idle = State
+    val Protecting = State
+    val Refilling = State
+    val Operational = StateOr(Idle, Protecting, Refilling) // to prevent brigade to be in multiple states at the same time
+
+    constraints(
+      Protecting <-> (assignedFireLocation != null && brigadeState == ProtectingMirror) &&
+      Refilling -> (refillingAtRefillPlace || tankEmpty)
+    )
+
+    def getInitPosition(entityID: EntityID): Position = {
+      val model = agent.model
+      val location = model.getEntity(entityID).getLocation(model)
+      Position(location.first.toInt, location.second.toInt)
+    }
+
+    def getInitWaterLevel(entityID: EntityID): Int = {
+      val brigade = agent.model.getEntity(entityID).asInstanceOf[rescuecore2.standard.entities.FireBrigade]
+      brigade.getWater
+    }
+
+    def refillingAtRefillPlace: Boolean = ???
+    def tankEmpty: Boolean = ??? //getWater == 0
   }
 
   class FireStation(val entityID: EntityID) extends Component {
     val fireCoordination = new FireCoordination(this)
     val fireCoordinationRoot = root(fireCoordination)
 
-    // preActions ...
+    // preActions ... <- receive messages from components, update local components state + world model
+
+    preActions(
+      processReceivedMessages()
+    )
 
     actions {
       fireCoordinationRoot.init()
@@ -50,22 +97,39 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
         }
       // ...
     }
+
+    def processReceivedMessages(): Unit = {
+      sensing.messages.foreach{
+        case (FireBrigadeToInitiator(ghostState, x, y), message) =>
+          updateInitiatorKnowledge(message.getAgentID, FireBrigade.MirrorState(ghostState), Position(x, y))
+
+        case _ =>
+      }
+    }
+
+    def updateInitiatorKnowledge(id: EntityID, ghostState: FireBrigade.MirrorState.MirrorState, position: Position): Unit = {
+      val brigade = components.collect{ case x: FireBrigade => x}.find(_.entityID == id).get
+      brigade.brigadeState = ghostState
+      brigade.brigadePosition = position
+      //brigade.waterLevel = waterLevel
+    }
   }
 
   class ProtectionTeam(coordinator: FireStation, fireLocation: EntityID) extends Ensemble {
 
+    import FireBrigade.MirrorState._
+
     val brigades = role("brigades",components.select[FireBrigade])
 
-    import FireBrigade.{Idle, Protecting}
-
     membership(
-      brigades.all(brigade => (brigade in Idle) || (brigade in Protecting) && brigade.fireLocation == fireLocation) &&
+      brigades.all(brigade => (brigade.brigadeState == IdleMirror)
+        || (brigade.brigadeState == ProtectingMirror) && brigade.assignedFireLocation == fireLocation) &&
               brigades.cardinality >= 2 && brigades.cardinality <= 3
     )
 
     actions {
       for (brigade <- brigades.selectedMembers) {
-        brigade.protectAroundFire = fireLocation
+        brigade.assignedFireLocation = fireLocation
         assignRoleAndBuildingsToProtect(brigade)
       }
     }

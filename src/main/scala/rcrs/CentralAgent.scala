@@ -54,6 +54,9 @@ class CentralAgent extends ScalaAgent {
 
       // TODO - central agent now handles whole rootEnsemble, but in rcrs
       // there may be multiple central agents
+      // TODO - remove ensemble init/solve/commit from here?
+      // - where is solve/commit called?
+      /*
       scenario.rootEnsemble.init()
       println("RescueScenario initialized")
 
@@ -64,6 +67,7 @@ class CentralAgent extends ScalaAgent {
       // TODO - ensemble sets zone, but this happens only on central agent.
       // Where is the message sent to mobile agent?
       scenario.rootEnsemble.commit()
+      */
     }
   }
 
