@@ -1,10 +1,10 @@
 package rcrs.scenario
 
-import rcrs.ScalaAgent
+import rcrs.{FireBrigadeAgent, ScalaAgent}
 import rcrs.comm._
 import rcrs.traits.RCRSConnectorTrait
 import rcrs.traits.map2d.RCRSNodeStatus
-import rescuecore2.standard.entities.Building
+import rescuecore2.standard.entities.{FireBrigade => RescueFireBrigade, Refuge, Building}
 import rescuecore2.worldmodel.EntityID
 import tcof._
 import tcof.traits.map2d.{Map2DTrait, Node, Position}
@@ -37,9 +37,6 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     // initiator -> fb - assigns fire
     var assignedFireLocation: EntityID = null
 
-    // fb -> initiator
-    //var waterLevel: Int = getInitWaterLevel(entityID)
-
     // information transferred between initiator and component - end
 
 
@@ -51,7 +48,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
     constraints(
       Protecting <-> (assignedFireLocation != null && brigadeState == ProtectingMirror) &&
-      Refilling -> (refillingAtRefillPlace || tankEmpty)
+      Refilling -> (refillingAtRefuge || tankEmpty)
     )
 
     def getInitPosition(entityID: EntityID): Position = {
@@ -61,12 +58,13 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     def getInitWaterLevel(entityID: EntityID): Int = {
-      val brigade = agent.model.getEntity(entityID).asInstanceOf[rescuecore2.standard.entities.FireBrigade]
+      val brigade = agent.model.getEntity(entityID).asInstanceOf[RescueFireBrigade]
       brigade.getWater
     }
 
-    def refillingAtRefillPlace: Boolean = ???
-    def tankEmpty: Boolean = ??? //getWater == 0
+    def waterLevel: Int = agent.me.asInstanceOf[RescueFireBrigade].getWater
+    def refillingAtRefuge: Boolean = agent.location.isInstanceOf[Refuge] && waterLevel < agent.asInstanceOf[FireBrigadeAgent].maxWater
+    def tankEmpty: Boolean = waterLevel == 0
   }
 
   class FireStation(val entityID: EntityID) extends Component {
