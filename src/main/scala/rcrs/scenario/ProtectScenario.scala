@@ -9,33 +9,37 @@ import rescuecore2.worldmodel.EntityID
 import tcof._
 import tcof.traits.map2d.{Map2DTrait, Node, Position}
 
-class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] {
-  this.agent = scalaAgent
+object ProtectScenario {
+  object FireBrigadeStatic {
 
-  object FireBrigade {
     /** Representation of the component's state, transferred between component and ensemble
       * and used in computations on the initiator of the ensemble. */
     object MirrorState extends Enumeration {
       type MirrorState = Value
       val IdleMirror, ProtectingMirror, RefillingMirror = Value
     }
+
   }
+}
+
+import ProtectScenario.FireBrigadeStatic.MirrorState._
+
+class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] {
+  this.agent = scalaAgent
 
   class FireBrigade(val entityID: EntityID) extends Component {
-    import FireBrigade.MirrorState._
-
     // information transferred between initiator and component - start
 
     // fb -> initiator - fb changes state to Refilling when runs out of water
     // initiator -> fb - ensemble changes state from Idle to Protecting
-    var brigadeState: MirrorState = IdleMirror
+    var brigadeState = IdleMirror
 
     // fb -> initiator - current fb position
     var brigadePosition: Position = getInitPosition(entityID)
 
     // fb -> initiator - fire is extinguished or when refilling (sets to null)
     // initiator -> fb - assigns fire
-    var assignedFireLocation: EntityID = null
+    var assignedFireLocation: Option[EntityID] = None
 
     // information transferred between initiator and component - end
 
@@ -57,18 +61,12 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
     def processReceivedMessages(): Unit = {
       sensing.messages.foreach{
-        case (InitiatorToFireBrigade(receiverId, mirrorState, assignedFireLocation, assignedFireLocationDefined), _) if receiverId == agent.getID =>
-          val fireLocation = if (assignedFireLocationDefined) assignedFireLocation else null
-          val state = FireBrigade.MirrorState(mirrorState)
-          updateComponentKnowledge(state, fireLocation)
+        case (InitiatorToFireBrigade(receiverId, mirrorState, fireLocation), _) if receiverId == agent.getID =>
+          brigadeState = mirrorState
+          assignedFireLocation = fireLocation
 
         case _ =>
       }
-    }
-
-    def updateComponentKnowledge(state: FireBrigade.MirrorState.Value, fireLocation: EntityID): Unit = {
-      brigadeState = state
-      assignedFireLocation = fireLocation
     }
 
     def getInitPosition(entityID: EntityID): Position = {
@@ -108,22 +106,22 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
           // - state of the component (e.g. Protecting)
           // TODO - how is component switched back to Idle? Is that automatic when component runs
           // out of water or when fire is extinguished ?
-
-          agent.sendSpeak(time, Constants.TO_AGENTS, Message.encode(??? /*TODO*/ ))
+//          val message = InitiatorToFireBrigade(brigade.entityID, brigade.brigadeState.id, brigade.assignedFireLocation, )
+//          agent.sendSpeak(time, Constants.TO_AGENTS, Message.encode(??? /*TODO*/ ))
         }
       // ...
     }
 
     def processReceivedMessages(): Unit = {
       sensing.messages.foreach{
-        case (FireBrigadeToInitiator(mirrorState, x, y), message) =>
-          updateInitiatorKnowledge(message.getAgentID, FireBrigade.MirrorState(mirrorState), Position(x, y))
+        case (FireBrigadeToInitiator(mirrorState, position), message) =>
+          updateInitiatorKnowledge(message.getAgentID, mirrorState, position)
 
         case _ =>
       }
     }
 
-    def updateInitiatorKnowledge(id: EntityID, mirrorState: FireBrigade.MirrorState.MirrorState, position: Position): Unit = {
+    def updateInitiatorKnowledge(id: EntityID, mirrorState: MirrorState, position: Position): Unit = {
       val brigade = components.collect{ case x: FireBrigade => x}.find(_.entityID == id).get
       brigade.brigadeState = mirrorState
       brigade.brigadePosition = position
@@ -131,8 +129,6 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
   }
 
   class ProtectionTeam(coordinator: FireStation, fireLocation: EntityID) extends Ensemble {
-
-    import FireBrigade.MirrorState._
 
     val brigades = role("brigades",components.select[FireBrigade])
 
@@ -144,7 +140,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
     actions {
       for (brigade <- brigades.selectedMembers) {
-        brigade.assignedFireLocation = fireLocation
+        brigade.assignedFireLocation = Some(fireLocation)
         assignRoleAndBuildingsToProtect(brigade)
       }
     }

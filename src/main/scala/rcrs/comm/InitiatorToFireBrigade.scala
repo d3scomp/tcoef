@@ -1,20 +1,20 @@
 package rcrs.comm
 
+import rcrs.scenario.ProtectScenario.FireBrigadeStatic.MirrorState.MirrorState
+import rescuecore2.worldmodel.EntityID
 import scodec.bits.BitVector
 import scodec.codecs._
-import rescuecore2.worldmodel.EntityID
 
 /**
   * Message sent from central agent to brigade
   */
-case class InitiatorToFireBrigade(receiverId: EntityID, mirrorState: Int, asignedFireLocation: EntityID, assignedFireLocationDefined: Boolean) extends Message
+case class InitiatorToFireBrigade(receiverId: EntityID, state: MirrorState, asignedFireLocation: Option[EntityID]) extends Message
 
 object InitiatorToFireBrigade {
   val codec = {
     (constant(BitVector.fromInt(Message.MessageType.INITIATOR_TO_FIRE_BRIGADE.id, Message.MessageTypeBits))) ::
     ("receiverId" | Message.entityIDCodec) ::
-    ("mirrorState" | uint(4)) ::
-    ("assignedFireLocation" | Message.entityIDCodec) ::
-    ("assignedFireLocationDefined" | bool) // TODO use optional codec with assignedFireLocation
+    ("state" | Message.fireBrigadeStateCodec) ::
+    ("assignedFireLocation" | optional(bool, Message.entityIDCodec))
   }.as[InitiatorToFireBrigade]
 }

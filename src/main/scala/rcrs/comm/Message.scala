@@ -1,9 +1,11 @@
 package rcrs.comm
 
+import rcrs.scenario.ProtectScenario
 import rescuecore2.worldmodel.EntityID
 import scodec.Attempt.{Failure, Successful}
 import scodec.bits._
 import scodec.codecs._
+import tcof.traits.map2d.Position
 
 abstract class Message
 
@@ -24,8 +26,9 @@ object Message {
   }
 
   val shortIdCodec = uint4
-
   val entityIDCodec = int32.xmap((id: Int) => new EntityID(id), (id: EntityID) => id.getValue)
+  val positionCodec = (double :: double).as[Position]
+  val fireBrigadeStateCodec = enumerated(uint4, ProtectScenario.FireBrigadeStatic.MirrorState)
 
 
   val codec = choice(
