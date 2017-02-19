@@ -20,6 +20,7 @@ object Message {
     val EXTINGUISH = Value(4)
     val FIRE_BRIGADE_STATUS = Value(5)
     val FIRE_BRIGADE_TO_INITIATOR = Value(6)
+    val INITIATOR_TO_FIRE_BRIGADE = Value(7)
   }
 
   val shortIdCodec = uint4

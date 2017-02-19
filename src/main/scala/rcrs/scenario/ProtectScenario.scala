@@ -1,10 +1,10 @@
 package rcrs.scenario
 
-import rcrs.{FireBrigadeAgent, ScalaAgent}
 import rcrs.comm._
 import rcrs.traits.RCRSConnectorTrait
 import rcrs.traits.map2d.RCRSNodeStatus
-import rescuecore2.standard.entities.{FireBrigade => RescueFireBrigade, Refuge, Building}
+import rcrs.{FireBrigadeAgent, ScalaAgent}
+import rescuecore2.standard.entities.{Building, FireBrigade => RescueFireBrigade, Refuge}
 import rescuecore2.worldmodel.EntityID
 import tcof._
 import tcof.traits.map2d.{Map2DTrait, Node, Position}
@@ -46,10 +46,30 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     val Refilling = State
     val Operational = StateOr(Idle, Protecting, Refilling) // to prevent brigade to be in multiple states at the same time
 
+    preActions(
+      processReceivedMessages()
+    )
+
     constraints(
       Protecting <-> (assignedFireLocation != null && brigadeState == ProtectingMirror) &&
       Refilling -> (refillingAtRefuge || tankEmpty)
     )
+
+    def processReceivedMessages(): Unit = {
+      sensing.messages.foreach{
+        case (InitiatorToFireBrigade(receiverId, mirrorState, assignedFireLocation, assignedFireLocationDefined), _) if receiverId == agent.getID =>
+          val fireLocation = if (assignedFireLocationDefined) assignedFireLocation else null
+          val state = FireBrigade.MirrorState(mirrorState)
+          updateComponentKnowledge(state, fireLocation)
+
+        case _ =>
+      }
+    }
+
+    def updateComponentKnowledge(state: FireBrigade.MirrorState.Value, fireLocation: EntityID): Unit = {
+      brigadeState = state
+      assignedFireLocation = fireLocation
+    }
 
     def getInitPosition(entityID: EntityID): Position = {
       val model = agent.model
@@ -70,8 +90,6 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
   class FireStation(val entityID: EntityID) extends Component {
     val fireCoordination = new FireCoordination(this)
     val fireCoordinationRoot = root(fireCoordination)
-
-    // preActions ... <- receive messages from components, update local components state + world model
 
     preActions(
       processReceivedMessages()
@@ -98,18 +116,17 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
     def processReceivedMessages(): Unit = {
       sensing.messages.foreach{
-        case (FireBrigadeToInitiator(ghostState, x, y), message) =>
-          updateInitiatorKnowledge(message.getAgentID, FireBrigade.MirrorState(ghostState), Position(x, y))
+        case (FireBrigadeToInitiator(mirrorState, x, y), message) =>
+          updateInitiatorKnowledge(message.getAgentID, FireBrigade.MirrorState(mirrorState), Position(x, y))
 
         case _ =>
       }
     }
 
-    def updateInitiatorKnowledge(id: EntityID, ghostState: FireBrigade.MirrorState.MirrorState, position: Position): Unit = {
+    def updateInitiatorKnowledge(id: EntityID, mirrorState: FireBrigade.MirrorState.MirrorState, position: Position): Unit = {
       val brigade = components.collect{ case x: FireBrigade => x}.find(_.entityID == id).get
-      brigade.brigadeState = ghostState
+      brigade.brigadeState = mirrorState
       brigade.brigadePosition = position
-      //brigade.waterLevel = waterLevel
     }
   }
 
