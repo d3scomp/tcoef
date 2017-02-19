@@ -106,8 +106,8 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
           // - state of the component (e.g. Protecting)
           // TODO - how is component switched back to Idle? Is that automatic when component runs
           // out of water or when fire is extinguished ?
-//          val message = InitiatorToFireBrigade(brigade.entityID, brigade.brigadeState.id, brigade.assignedFireLocation, )
-//          agent.sendSpeak(time, Constants.TO_AGENTS, Message.encode(??? /*TODO*/ ))
+          val message = InitiatorToFireBrigade(brigade.entityID, brigade.brigadeState, brigade.assignedFireLocation)
+          agent.sendSpeak(time, Constants.TO_AGENTS, Message.encode(message))
         }
       // ...
     }
