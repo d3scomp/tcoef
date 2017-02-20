@@ -45,10 +45,10 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
 
     // states are used only for resolution in component, not propagated to ensemble
-    val Idle = State
-    val Protecting = State
-    val Refilling = State
-    val Operational = StateOr(Idle, Protecting, Refilling) // to prevent brigade to be in multiple states at the same time, TODO - discuss whether use Operational
+    private val Idle = State
+    private val Protecting = State
+    private val Refilling = State
+    private val Operational = StateOr(Idle, Protecting, Refilling) // to prevent brigade to be in multiple states at the same time, TODO - discuss whether use Operational
 
     preActions(
       processReceivedMessages()
@@ -60,7 +60,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       Idle <-> (!assignedFireLocation.isDefined)
     )
 
-    def processReceivedMessages(): Unit = {
+    private def processReceivedMessages(): Unit = {
       sensing.messages.foreach{
         case (InitiatorToFireBrigade(receiverId, mirrorState, fireLocation), _) if receiverId == agent.getID =>
           brigadeState = mirrorState
@@ -70,25 +70,26 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       }
     }
 
-    def getInitPosition(entityID: EntityID): Position = {
+    private def getInitPosition(entityID: EntityID): Position = {
       val model = agent.model
       val location = model.getEntity(entityID).getLocation(model)
       Position(location.first.toDouble, location.second.toDouble)
     }
 
-    def getInitWaterLevel(entityID: EntityID): Int = {
+    private def getInitWaterLevel(entityID: EntityID): Int = {
       val brigade = agent.model.getEntity(entityID).asInstanceOf[RescueFireBrigade]
       brigade.getWater
     }
 
-    def waterLevel: Int = agent.me.asInstanceOf[RescueFireBrigade].getWater
-    def refillingAtRefuge: Boolean = agent.location.isInstanceOf[Refuge] && waterLevel < agent.asInstanceOf[FireBrigadeAgent].maxWater
-    def tankEmpty: Boolean = waterLevel == 0
+    private def waterLevel: Int = agent.me.asInstanceOf[RescueFireBrigade].getWater
+    private def refillingAtRefuge: Boolean = agent.location.isInstanceOf[Refuge] && waterLevel < agent.asInstanceOf[FireBrigadeAgent].maxWater
+    private def tankEmpty: Boolean = waterLevel == 0
   }
 
+
   class FireStation(val entityID: EntityID) extends Component {
-    val fireCoordination = new FireCoordination(this)
-    val fireCoordinationRoot = root(fireCoordination)
+    private val fireCoordination = new FireCoordination(this)
+    private val fireCoordinationRoot = root(fireCoordination)
 
     preActions(
       processReceivedMessages()
@@ -113,7 +114,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       // ...
     }
 
-    def processReceivedMessages(): Unit = {
+    private def processReceivedMessages(): Unit = {
       sensing.messages.foreach{
         case (FireBrigadeToInitiator(mirrorState, position), message) =>
           updateInitiatorKnowledge(message.getAgentID, mirrorState, position)
@@ -122,7 +123,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       }
     }
 
-    def updateInitiatorKnowledge(id: EntityID, mirrorState: MirrorState, position: Position): Unit = {
+    private def updateInitiatorKnowledge(id: EntityID, mirrorState: MirrorState, position: Position): Unit = {
       val brigade = components.collect{ case x: FireBrigade => x}.find(_.entityID == id).get
       brigade.brigadeState = mirrorState
       brigade.brigadePosition = position
@@ -146,14 +147,16 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       }
     }
 
-    def sameLocations(optionalLocation: Option[EntityID]): Boolean = {
+    private def sameLocations(optionalLocation: Option[EntityID]): Boolean = {
       optionalLocation match {
         case Some(location) => fireLocation == location
         case _ => false
       }
     }
 
-    def assignRoleAndBuildingsToProtect(brigade: FireBrigade) = ???
+    private def assignRoleAndBuildingsToProtect(brigade: FireBrigade) = {
+      // TODO - "protection role" in Protect mode not defined
+    }
   }
 
   class ExtinguishTeam(coordinator: FireStation, fireLocation: EntityID) extends Ensemble {
@@ -163,7 +166,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
   class FireCoordination(coordinator: FireStation) extends RootEnsemble /* TODO - will extend just Ensamble */ {
 
-    val buildingsOnFire: Seq[EntityID] = findBuildingsOnFire(map.nodes)
+    private val buildingsOnFire: Seq[EntityID] = findBuildingsOnFire(map.nodes)
 
     // assigns 2-3 brigades to each building - there can be many brigades unassigned
     val extinguishTeams = ensembles(buildingsOnFire.map(new ExtinguishTeam(coordinator, _)))
@@ -173,7 +176,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       (extinguishTeams.map(_.brigades) ++ protectionTeams.map(_.brigades)).allDisjoint
     )
 
-    def findBuildingsOnFire(nodes: Seq[Node[RCRSNodeStatus]]): Seq[EntityID] = {
+    private def findBuildingsOnFire(nodes: Seq[Node[RCRSNodeStatus]]): Seq[EntityID] = {
       nodes.map{map.toArea(_)}
         .collect{ case building: Building if building.isOnFire => building }
         .map(_.getID)
