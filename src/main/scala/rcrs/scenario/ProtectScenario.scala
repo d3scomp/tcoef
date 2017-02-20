@@ -37,7 +37,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     // fb -> initiator - current fb position
     var brigadePosition: Position = getInitPosition(entityID)
 
-    // fb -> initiator - fire is extinguished or when refilling (sets to null)
+    // fb -> initiator - fire is extinguished or when refilling (sets to None)
     // initiator -> fb - assigns fire
     var assignedFireLocation: Option[EntityID] = None
 
@@ -55,8 +55,8 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     )
 
     constraints(
-      Protecting <-> (assignedFireLocation != null && brigadeState == ProtectingMirror) &&
-      Refilling -> (refillingAtRefuge || tankEmpty)
+      Protecting <-> (assignedFireLocation.isDefined && brigadeState == ProtectingMirror) &&
+      Refilling -> (refillingAtRefuge || tankEmpty) &&
     )
 
     def processReceivedMessages(): Unit = {
@@ -134,7 +134,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
     membership(
       brigades.all(brigade => (brigade.brigadeState == IdleMirror)
-        || (brigade.brigadeState == ProtectingMirror) && brigade.assignedFireLocation == fireLocation) &&
+        || (brigade.brigadeState == ProtectingMirror) && sameLocations(brigade.assignedFireLocation)) &&
               brigades.cardinality >= 2 && brigades.cardinality <= 3
     )
 
@@ -142,6 +142,13 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       for (brigade <- brigades.selectedMembers) {
         brigade.assignedFireLocation = Some(fireLocation)
         assignRoleAndBuildingsToProtect(brigade)
+      }
+    }
+
+    def sameLocations(optionalLocation: Option[EntityID]): Boolean = {
+      optionalLocation match {
+        case Some(location) => fireLocation == location
+        case _ => false
       }
     }
 
