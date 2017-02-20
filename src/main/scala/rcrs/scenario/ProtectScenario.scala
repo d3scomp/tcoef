@@ -35,7 +35,8 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     var brigadeState = IdleMirror
 
     // fb -> initiator - current fb position
-    var brigadePosition: Position = getInitPosition(entityID)
+    // initialized and updated in preactions (cannot be initialized before rcrs model creation)
+    var brigadePosition: Position = _
 
     // fb -> initiator - fire is extinguished or when refilling (sets to None)
     // initiator -> fb - assigns fire
@@ -48,9 +49,10 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     private val Idle, Protecting, Refilling = State
     private val Operational = StateOr(Idle, Protecting, Refilling) // to prevent brigade to be in multiple states at the same time, TODO - discuss whether use Operational
 
-    preActions(
+    preActions {
+      brigadePosition = getPosition
       processReceivedMessages()
-    )
+    }
 
     constraints(
       Protecting -> (assignedFireLocation.isDefined && brigadeState == ProtectingMirror) &&
@@ -84,7 +86,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       }
     }
 
-    private def getInitPosition(entityID: EntityID): Position = {
+    private def getPosition: Position = {
       val model = agent.model
       val location = model.getEntity(entityID).getLocation(model)
       Position(location.first.toDouble, location.second.toDouble)
@@ -137,6 +139,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       val brigade = components.collect{ case x: FireBrigade => x}.find(_.entityID == id).get
       brigade.brigadeState = mirrorState
       brigade.brigadePosition = position
+      // TODO - update position in rcrs model?
     }
   }
 
