@@ -58,9 +58,11 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       Idle -> (!assignedFireLocation.isDefined)
     )
 
-    actions(
+    actions {
       syncMirrorBrigadeState()
-    )
+      val message = FireBrigadeToInitiator(brigadeState, brigadePosition)
+      agent.sendSpeak(time, Constants.TO_STATION, Message.encode(message))
+    }
 
     private def syncMirrorBrigadeState(): Unit = {
       brigadeState = if (states.selectedMembers.exists(_ == Refilling)) {
