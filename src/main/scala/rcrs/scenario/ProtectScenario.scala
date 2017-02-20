@@ -53,10 +53,24 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     )
 
     constraints(
-      Protecting <-> (assignedFireLocation.isDefined && brigadeState == ProtectingMirror) &&
-      Refilling -> (refillingAtRefuge || tankEmpty) &&
-      Idle <-> (!assignedFireLocation.isDefined)
+      Protecting -> (assignedFireLocation.isDefined && brigadeState == ProtectingMirror) &&
+      Refilling <-> (refillingAtRefuge || tankEmpty) &&
+      Idle -> (!assignedFireLocation.isDefined)
     )
+
+    actions(
+      syncMirrorBrigadeState()
+    )
+
+    private def syncMirrorBrigadeState(): Unit = {
+      brigadeState = if (states.selectedMembers.exists(_ == Refilling)) {
+         RefillingMirror
+      } else if (states.selectedMembers.exists(_ == Protecting)) {
+        ProtectingMirror
+      } else {
+        IdleMirror
+      }
+    }
 
     private def processReceivedMessages(): Unit = {
       sensing.messages.foreach{
