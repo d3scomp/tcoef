@@ -72,7 +72,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     def getInitPosition(entityID: EntityID): Position = {
       val model = agent.model
       val location = model.getEntity(entityID).getLocation(model)
-      Position(location.first.toInt, location.second.toInt)
+      Position(location.first.toDouble, location.second.toDouble)
     }
 
     def getInitWaterLevel(entityID: EntityID): Int = {
