@@ -48,7 +48,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     val Idle = State
     val Protecting = State
     val Refilling = State
-    val Operational = StateOr(Idle, Protecting, Refilling) // to prevent brigade to be in multiple states at the same time
+    val Operational = StateOr(Idle, Protecting, Refilling) // to prevent brigade to be in multiple states at the same time, TODO - discuss whether use Operational
 
     preActions(
       processReceivedMessages()
@@ -57,6 +57,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     constraints(
       Protecting <-> (assignedFireLocation.isDefined && brigadeState == ProtectingMirror) &&
       Refilling -> (refillingAtRefuge || tankEmpty) &&
+      Idle <-> (!assignedFireLocation.isDefined)
     )
 
     def processReceivedMessages(): Unit = {
