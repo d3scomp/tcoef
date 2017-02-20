@@ -6,7 +6,6 @@ import rescuecore2.log.Logger
 import rescuecore2.messages.Command
 import rescuecore2.standard.entities.{FireBrigade => RescueFireBrigade, _}
 import rescuecore2.worldmodel.ChangeSet
-import tcof.traits.map2d.Position
 
 
 class CentralAgent extends ScalaAgent {
@@ -49,25 +48,6 @@ class CentralAgent extends ScalaAgent {
       }
 
       component.commit()
-
-      // solve root ensemble
-
-      // TODO - central agent now handles whole rootEnsemble, but in rcrs
-      // there may be multiple central agents
-      // TODO - remove ensemble init/solve/commit from here?
-      // - where is solve/commit called?
-      /*
-      scenario.rootEnsemble.init()
-      println("RescueScenario initialized")
-
-      while (scenario.rootEnsemble.solve()) {
-        println(scenario.toString)
-      }
-
-      // TODO - ensemble sets zone, but this happens only on central agent.
-      // Where is the message sent to mobile agent?
-      scenario.rootEnsemble.commit()
-      */
     }
   }
 
@@ -76,14 +56,14 @@ class CentralAgent extends ScalaAgent {
     */
   private def createFireBrigadeComponents: Iterable[scenario.FireBrigade] = {
     findEntities[RescueFireBrigade](StandardEntityURN.FIRE_BRIGADE).map { fb =>
-      new scenario.FireBrigade(fb.getID /*, Position(fb.getX, fb.getY) */)
+      new scenario.FireBrigade(fb.getID)
     }
   }
 
   private def createFireStationComponent: scenario.FireStation = {
     // TODO - assumption - exactly one fire station exists
     val fs = findEntities[FireStation](StandardEntityURN.FIRE_STATION).head
-    new scenario.FireStation(fs.getID /* , Position(fs.getX, fs.getY) */)
+    new scenario.FireStation(fs.getID)
   }
 
   private def findEntities[T <: StandardEntity](urn: StandardEntityURN): Iterable[T] = {
