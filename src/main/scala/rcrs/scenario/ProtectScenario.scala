@@ -180,11 +180,18 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
   class FireCoordination(coordinator: FireStation) extends RootEnsemble /* TODO - will extend just Ensamble */ {
 
-    private val buildingsOnFire: Seq[EntityID] = findBuildingsOnFire(map.nodes)
+    private var buildingsOnFire: Seq[EntityID] = _
 
     // assigns 2-3 brigades to each building - there can be many brigades unassigned
-    val extinguishTeams = ensembles(buildingsOnFire.map(new ExtinguishTeam(coordinator, _)))
-    val protectionTeams = ensembles(buildingsOnFire.map(new ProtectionTeam(coordinator, _)))
+    var extinguishTeams: EnsembleGroup[ExtinguishTeam] = _
+    var protectionTeams: EnsembleGroup[ProtectionTeam] = _
+
+    preActions {
+      // need to be recomputed in each step
+      buildingsOnFire = findBuildingsOnFire(map.nodes)
+      extinguishTeams = ensembles(buildingsOnFire.map(new ExtinguishTeam(coordinator, _)))
+      protectionTeams = ensembles(buildingsOnFire.map(new ProtectionTeam(coordinator, _)))
+    }
 
     membership(
       (extinguishTeams.map(_.brigades) ++ protectionTeams.map(_.brigades)).allDisjoint
