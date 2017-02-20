@@ -50,7 +50,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     private val Operational = StateOr(Idle, Protecting, Refilling) // to prevent brigade to be in multiple states at the same time, TODO - discuss whether use Operational
 
     preActions {
-      brigadePosition = getPosition
+      brigadePosition = agent.getPosition
       processReceivedMessages()
     }
 
@@ -86,12 +86,6 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       }
     }
 
-    private def getPosition: Position = {
-      val model = agent.model
-      val location = model.getEntity(entityID).getLocation(model)
-      Position(location.first.toDouble, location.second.toDouble)
-    }
-
     private def getInitWaterLevel(entityID: EntityID): Int = {
       val brigade = agent.model.getEntity(entityID).asInstanceOf[RescueFireBrigade]
       brigade.getWater
@@ -104,19 +98,27 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
 
   class FireStation(val entityID: EntityID) extends Component {
-    private val fireCoordination = new FireCoordination(this)
-    private val fireCoordinationRoot = root(fireCoordination)
+    //private val fireCoordination = new FireCoordination(this)
+    //private val fireCoordinationRoot = root(fireCoordination)
+
+    val fireCoordination = root(new FireCoordination(this))
 
     preActions(
       processReceivedMessages()
     )
 
     actions {
-      fireCoordinationRoot.init()
+      fireCoordination.init()
 
       // TODO - should solve and commit be called here? IMHO yes as sendSpeak sends updated attribute values
+      while (fireCoordination.solve()) {
+        println(fireCoordination.toString)
+      }
 
-      for (protectionTeam <- fireCoordination.protectionTeams.selectedMembers)
+      fireCoordination.commit()
+
+
+      for (protectionTeam <- fireCoordination.instance.protectionTeams.selectedMembers)
         for (brigade <- protectionTeam.brigades.selectedMembers) {
           // TODO - how is component switched back to Idle? Is that automatic when component runs
           // out of water or when fire is extinguished ?
@@ -179,18 +181,11 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
   class FireCoordination(coordinator: FireStation) extends RootEnsemble /* TODO - will extend just Ensamble */ {
 
-    private var buildingsOnFire: Seq[EntityID] = _
+    private val buildingsOnFire = findBuildingsOnFire(map.nodes)
 
     // assigns 2-3 brigades to each building - there can be many brigades unassigned
-    var extinguishTeams: EnsembleGroup[ExtinguishTeam] = _
-    var protectionTeams: EnsembleGroup[ProtectionTeam] = _
-
-    preActions {
-      // need to be recomputed in each step
-      buildingsOnFire = findBuildingsOnFire(map.nodes)
-      extinguishTeams = ensembles(buildingsOnFire.map(new ExtinguishTeam(coordinator, _)))
-      protectionTeams = ensembles(buildingsOnFire.map(new ProtectionTeam(coordinator, _)))
-    }
+    val extinguishTeams = ensembles(buildingsOnFire.map(new ExtinguishTeam(coordinator, _)))
+    val protectionTeams = ensembles(buildingsOnFire.map(new ProtectionTeam(coordinator, _)))
 
     membership(
       (extinguishTeams.map(_.brigades) ++ protectionTeams.map(_.brigades)).allDisjoint

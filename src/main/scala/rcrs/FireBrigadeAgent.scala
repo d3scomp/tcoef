@@ -11,10 +11,8 @@ import rescuecore2.worldmodel.ChangeSet
 class FireBrigadeAgent extends ScalaAgent {
   override type AgentEntityType = FireBrigadeEntity
 
-//  val scenario = new RescueScenario(this)
-val scenario = new ProtectScenario(this)
-  val component = new scenario.FireBrigade(getID /*, getPosition */)
-  scenario.components = List(component)
+  private val scenario = new ProtectScenario(this)
+  private lazy val component: scenario.FireBrigade = new scenario.FireBrigade(getID) // lazy to postpone creation (getID returns null as model is not initialized)
 
   private val MAX_WATER_KEY = "fire.tank.maximum"
   private val MAX_DISTANCE_KEY = "fire.extinguish.max-distance"
@@ -26,6 +24,8 @@ val scenario = new ProtectScenario(this)
 
   override protected def postConnect() {
     super.postConnect()
+
+    scenario.components = List(component)
     scenario.init()
 
     Logger.info(s"Fire brigade agent connected: max extinguish distance = $maxDistance, max power = $maxPower, max tank = $maxWater")
