@@ -116,10 +116,6 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
       for (protectionTeam <- fireCoordination.protectionTeams.selectedMembers)
         for (brigade <- protectionTeam.brigades.selectedMembers) {
-          // coordinator sends attribute values to selected components:
-          // - entityID of fire
-          // - role of the brigade at fire
-          // - state of the component (e.g. Protecting)
           // TODO - how is component switched back to Idle? Is that automatic when component runs
           // out of water or when fire is extinguished ?
           val message = InitiatorToFireBrigade(brigade.entityID, brigade.brigadeState, brigade.assignedFireLocation)
