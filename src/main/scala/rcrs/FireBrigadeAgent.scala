@@ -2,7 +2,7 @@ package rcrs
 
 import rescuecore2.log.Logger
 import rcrs.comm._
-import rcrs.scenario.RescueScenario
+import rcrs.scenario.{ProtectScenario, RescueScenario}
 import rescuecore2.messages.Command
 import rescuecore2.standard.entities.{StandardEntityURN, FireBrigade => FireBrigadeEntity}
 import rescuecore2.worldmodel.ChangeSet
@@ -11,8 +11,9 @@ import rescuecore2.worldmodel.ChangeSet
 class FireBrigadeAgent extends ScalaAgent {
   override type AgentEntityType = FireBrigadeEntity
 
-  val scenario = new RescueScenario(this)
-  val component = new scenario.FireBrigade(getID, getPosition)
+//  val scenario = new RescueScenario(this)
+val scenario = new ProtectScenario(this)
+  val component = new scenario.FireBrigade(getID /*, getPosition */)
   scenario.components = List(component)
 
   private val MAX_WATER_KEY = "fire.tank.maximum"

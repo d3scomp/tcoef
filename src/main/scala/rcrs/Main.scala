@@ -23,12 +23,14 @@ object Main {
 
     val launcher = new TCPComponentLauncher(host, port, config)
 
-    Logger.info("Connecting fire brigade ... ")
-    launcher.connect(new FireBrigadeAgent().rcrsAgent)
-    launcher.connect(new FireBrigadeAgent().rcrsAgent)
-    launcher.connect(new FireBrigadeAgent().rcrsAgent)
-    launcher.connect(new FireBrigadeAgent().rcrsAgent)
+    Logger.info("Connecting fire brigades ... ")
+    for (_ <- 1 to 4) {
+      launcher.connect(new FireBrigadeAgent().rcrsAgent)
+    }
+
+    Logger.info("Connecting central ... ")
     launcher.connect(new CentralAgent().rcrsAgent)
+
     Logger.info("success")
   }
 

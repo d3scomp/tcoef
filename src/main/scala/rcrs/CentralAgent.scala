@@ -1,7 +1,7 @@
 package rcrs
 
 import rcrs.comm._
-import rcrs.scenario.RescueScenario
+import rcrs.scenario.ProtectScenario
 import rescuecore2.log.Logger
 import rescuecore2.messages.Command
 import rescuecore2.standard.entities.{FireBrigade => RescueFireBrigade, _}
@@ -12,7 +12,7 @@ import tcof.traits.map2d.Position
 class CentralAgent extends ScalaAgent {
   override type AgentEntityType = Building
 
-  val scenario: RescueScenario = new RescueScenario(this)
+  val scenario = new ProtectScenario(this)
   // initialization moved to postConnect (agent.model is null in constructor)
   var component: scenario.FireStation = _
   var fireBrigadeComponents: Iterable[scenario.FireBrigade] = _
@@ -76,14 +76,14 @@ class CentralAgent extends ScalaAgent {
     */
   private def createFireBrigadeComponents: Iterable[scenario.FireBrigade] = {
     findEntities[RescueFireBrigade](StandardEntityURN.FIRE_BRIGADE).map { fb =>
-      new scenario.FireBrigade(fb.getID, Position(fb.getX, fb.getY))
+      new scenario.FireBrigade(fb.getID /*, Position(fb.getX, fb.getY) */)
     }
   }
 
   private def createFireStationComponent: scenario.FireStation = {
     // TODO - assumption - exactly one fire station exists
     val fs = findEntities[FireStation](StandardEntityURN.FIRE_STATION).head
-    new scenario.FireStation(fs.getID, Position(fs.getX, fs.getY))
+    new scenario.FireStation(fs.getID /* , Position(fs.getX, fs.getY) */)
   }
 
   private def findEntities[T <: StandardEntity](urn: StandardEntityURN): Iterable[T] = {
