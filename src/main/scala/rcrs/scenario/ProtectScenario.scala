@@ -45,9 +45,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
 
     // states are used only for resolution in component, not propagated to ensemble
-    private val Idle = State
-    private val Protecting = State
-    private val Refilling = State
+    private val Idle, Protecting, Refilling = State
     private val Operational = StateOr(Idle, Protecting, Refilling) // to prevent brigade to be in multiple states at the same time, TODO - discuss whether use Operational
 
     preActions(
