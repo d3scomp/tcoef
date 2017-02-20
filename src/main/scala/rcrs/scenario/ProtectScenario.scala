@@ -47,7 +47,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
     // states are used only for resolution in component, not propagated to ensemble
     private val Idle, Protecting, Refilling = State
-    private val Operational = StateOr(Idle, Protecting, Refilling) // to prevent brigade to be in multiple states at the same time, TODO - discuss whether use Operational
+    private val Operational = StateOr(Idle, Protecting, Refilling) // to prevent brigade to be in multiple states at the same time
 
     preActions {
       brigadePosition = agent.getPosition
@@ -55,24 +55,29 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     constraints(
-      Protecting -> (assignedFireLocation.isDefined && brigadeState == ProtectingMirror) &&
-      Refilling <-> (refillingAtRefuge || tankEmpty) &&
-      Idle -> (!assignedFireLocation.isDefined)
+      Operational &&
+      Protecting <-> (assignedFireLocation.isDefined && brigadeState == ProtectingMirror) &&
+      Refilling <-> (refillingAtRefuge || tankEmpty)
+      // Idle is default
     )
 
     actions {
-      syncMirrorBrigadeState()
+      syncFields()
       val message = FireBrigadeToInitiator(brigadeState, brigadePosition)
       agent.sendSpeak(time, Constants.TO_STATION, Message.encode(message))
     }
 
-    private def syncMirrorBrigadeState(): Unit = {
+    private def syncFields(): Unit = {
       brigadeState = if (states.selectedMembers.exists(_ == Refilling)) {
-         RefillingMirror
+        RefillingMirror
       } else if (states.selectedMembers.exists(_ == Protecting)) {
         ProtectingMirror
       } else {
         IdleMirror
+      }
+
+      if (brigadeState != ProtectingMirror) {
+        assignedFireLocation = None
       }
     }
 
