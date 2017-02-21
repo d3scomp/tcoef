@@ -45,7 +45,7 @@ class CentralAgent extends ScalaAgent {
       component.init()
 
       while (component.solve()) {
-        println(component.toStringWithUtility)
+        //println(component.toStringWithUtility)
       }
 
       component.commit()
