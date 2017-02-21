@@ -21,7 +21,7 @@ trait Ensemble extends WithConfig with WithName with WithUtility with WithEnsemb
     s"""Ensemble "$name":\n${indent(_roles.values.mkString(""), 1)}${indent(_ensembleGroups.mkString(""), 1)}"""
 
   def toStringWithUtility: String = {
-    s"""Ensemble "$name" (utility: $solutionUtility):\n${indent(_roles.values.mkString(""), 1)}${indent(_ensembleGroups.mkString(""), 1)}"""
+    s"""Ensemble "$name" (utility: $solutionUtility):\n${indent(_roles.values.mkString(""), 1)}${indent(_ensembleGroups.mapValues(_.toStringWithUtility).mkString(""), 1)}"""
   }
 
   implicit def iterableToMembersStatic[ComponentType <: Component](components: Iterable[ComponentType]): RoleMembersStatic[ComponentType] = new RoleMembersStatic(components)

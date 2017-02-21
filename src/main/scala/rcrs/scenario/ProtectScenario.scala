@@ -114,7 +114,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
       // TODO - should solve and commit be called here? IMHO yes as sendSpeak sends updated attribute values
       while (fireCoordination.solve()) {
-        println(fireCoordination.toString)
+        println(fireCoordination.instance.toStringWithUtility)
       }
 
       fireCoordination.commit()
