@@ -54,12 +54,12 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       processReceivedMessages()
     }
 
-    constraints(
+    constraints {
       Operational &&
       Protecting <-> (assignedFireLocation.isDefined && brigadeState == ProtectingMirror) &&
       Refilling <-> (refillingAtRefuge || tankEmpty)
       // Idle is default
-    )
+    }
 
     actions {
       syncFields()
@@ -103,14 +103,11 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
 
   class FireStation(val entityID: EntityID) extends Component {
-    //private val fireCoordination = new FireCoordination(this)
-    //private val fireCoordinationRoot = root(fireCoordination)
-
     val fireCoordination = root(new FireCoordination(this))
 
-    preActions(
+    preActions {
       processReceivedMessages()
-    )
+    }
 
     actions {
       fireCoordination.init()
@@ -154,11 +151,11 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
     val brigades = role("brigades",components.select[FireBrigade])
 
-    membership(
+    membership {
       brigades.all(brigade => (brigade.brigadeState == IdleMirror)
         || (brigade.brigadeState == ProtectingMirror) && sameLocations(brigade.assignedFireLocation)) &&
-              brigades.cardinality >= 2 && brigades.cardinality <= 3
-    )
+        brigades.cardinality >= 2 && brigades.cardinality <= 3
+    }
 
     actions {
       for (brigade <- brigades.selectedMembers) {
@@ -192,9 +189,9 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     val extinguishTeams = ensembles(buildingsOnFire.map(new ExtinguishTeam(coordinator, _)))
     val protectionTeams = ensembles(buildingsOnFire.map(new ProtectionTeam(coordinator, _)))
 
-    membership(
+    membership {
       (extinguishTeams.map(_.brigades) ++ protectionTeams.map(_.brigades)).allDisjoint
-    )
+    }
 
     private def findBuildingsOnFire(nodes: Seq[Node[RCRSNodeStatus]]): Seq[EntityID] = {
       nodes.map{map.toArea(_)}
