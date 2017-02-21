@@ -203,7 +203,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     private def findBuildingsOnFire(nodes: Seq[Node[RCRSNodeStatus]]): Seq[EntityID] = {
-      nodes.map{map.toArea(_)}
+      nodes.map(map.toArea)
         .collect{ case building: Building if building.isOnFire => building }
         .map(_.getID)
     }
