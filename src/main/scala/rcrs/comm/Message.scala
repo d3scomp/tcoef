@@ -15,6 +15,7 @@ object Message {
   object MessageType extends Enumeration {
     type MessageType = Value
 
+    // TODO - remove unused messages
     val REG_REQUEST = Value(0)
     val REG_RESPONSE = Value(1)
     val EXPLORATION_STATUS = Value(2)
@@ -32,10 +33,13 @@ object Message {
 
 
   val codec = choice(
+    // TODO - remove unused messages
     RegRequest.codec.upcast[Message],
     RegResponse.codec.upcast[Message],
     ExplorationStatus.codec.upcast[Message],
-    CurrentPosition.codec.upcast[Message]
+    CurrentPosition.codec.upcast[Message],
+    FireBrigadeToInitiator.codec.upcast[Message],
+    InitiatorToFireBrigade.codec.upcast[Message]
   )
 
   def decode(bytes: Array[Byte]): Message = {
