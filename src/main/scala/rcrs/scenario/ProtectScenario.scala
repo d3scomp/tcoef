@@ -169,7 +169,8 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
     private def proximityToFire(brigade: FireBrigade): Int = {
       val firePosition = map.toNode(fireLocation).center
-      - brigade.brigadePosition.distanceTo(firePosition).toInt
+      // shifted to avoid 0 as max for empty ensemble
+      100 - (brigade.brigadePosition.distanceTo(firePosition) / 10000).round.toInt
     }
 
     private def sameLocations(optionalLocation: Option[EntityID]): Boolean = {
