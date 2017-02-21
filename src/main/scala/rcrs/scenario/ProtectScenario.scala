@@ -27,7 +27,7 @@ import ProtectScenario.FireBrigadeStatic.MirrorState._
 class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] {
   this.agent = scalaAgent
 
-  class FireBrigade(val entityID: EntityID) extends Component {
+  class FireBrigade(val entityID: EntityID, var brigadePosition: Position) extends Component {
     // information transferred between initiator and component - start
 
     // fb -> initiator - fb changes state to Refilling when runs out of water
@@ -35,8 +35,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     var brigadeState = IdleMirror
 
     // fb -> initiator - current fb position
-    // initialized and updated in preactions (cannot be initialized before rcrs model creation)
-    var brigadePosition: Position = _
+    // brigadePosition - obtained in constructor (initial value assigned from)
 
     // fb -> initiator - fire is extinguished or when refilling (sets to None)
     // initiator -> fb - assigns fire

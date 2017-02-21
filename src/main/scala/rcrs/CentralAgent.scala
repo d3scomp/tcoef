@@ -6,6 +6,7 @@ import rescuecore2.log.Logger
 import rescuecore2.messages.Command
 import rescuecore2.standard.entities.{FireBrigade => RescueFireBrigade, _}
 import rescuecore2.worldmodel.ChangeSet
+import tcof.traits.map2d.Position
 
 
 class CentralAgent extends ScalaAgent {
@@ -56,7 +57,9 @@ class CentralAgent extends ScalaAgent {
     */
   private def createFireBrigadeComponents: Iterable[scenario.FireBrigade] = {
     findEntities[RescueFireBrigade](StandardEntityURN.FIRE_BRIGADE).map { fb =>
-      new scenario.FireBrigade(fb.getID)
+      val model = rcrsAgent.delegateModel
+      val location = fb.getLocation(model)
+      new scenario.FireBrigade(fb.getID, Position(location.first.toDouble, location.second.toDouble))
     }
   }
 

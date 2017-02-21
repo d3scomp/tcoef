@@ -6,13 +6,14 @@ import rcrs.scenario.{ProtectScenario, RescueScenario}
 import rescuecore2.messages.Command
 import rescuecore2.standard.entities.{StandardEntityURN, FireBrigade => FireBrigadeEntity}
 import rescuecore2.worldmodel.ChangeSet
+import tcof.traits.map2d.Position
 
 
 class FireBrigadeAgent extends ScalaAgent {
   override type AgentEntityType = FireBrigadeEntity
 
   private val scenario = new ProtectScenario(this)
-  private lazy val component: scenario.FireBrigade = new scenario.FireBrigade(getID) // lazy to postpone creation (getID returns null as model is not initialized)
+  private lazy val component: scenario.FireBrigade = createFireBrigade() // lazy to postpone creation (getID returns null as model is not initialized)
 
   private val MAX_WATER_KEY = "fire.tank.maximum"
   private val MAX_DISTANCE_KEY = "fire.extinguish.max-distance"
@@ -54,6 +55,13 @@ class FireBrigadeAgent extends ScalaAgent {
       component.commit()
 
     }
+  }
+
+  private def createFireBrigade(): scenario.FireBrigade = {
+    val model = rcrsAgent.delegateModel
+    val location = rcrsAgent.delegateLocation.getLocation(model)
+    val position = Position(location.first.toDouble, location.second.toDouble)
+    new scenario.FireBrigade(getID, position)
   }
 
   override protected def getRequestedEntityURNs: List[StandardEntityURN] = List(StandardEntityURN.FIRE_BRIGADE)
