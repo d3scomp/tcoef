@@ -90,11 +90,6 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       }
     }
 
-    private def getInitWaterLevel(entityID: EntityID): Int = {
-      val brigade = agent.model.getEntity(entityID).asInstanceOf[RescueFireBrigade]
-      brigade.getWater
-    }
-
     private def waterLevel: Int = agent.me.asInstanceOf[RescueFireBrigade].getWater
     private def refillingAtRefuge: Boolean = agent.location.isInstanceOf[Refuge] && waterLevel < agent.asInstanceOf[FireBrigadeAgent].maxWater
     private def tankEmpty: Boolean = waterLevel == 0
