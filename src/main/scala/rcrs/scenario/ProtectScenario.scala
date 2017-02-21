@@ -152,6 +152,10 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     utility {
+      // TODO - this utility function will always form team of 2 fire brigades
+      // The utility function should probably prefer 3 brigades, something like this:
+      // brigades.sum(proximityToFire) + (brigades.cardinality * 100)
+      // - "*" defined in Integer would be needed
       brigades.sum(proximityToFire)
     }
 
