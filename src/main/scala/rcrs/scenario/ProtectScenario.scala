@@ -4,7 +4,7 @@ import rcrs.comm._
 import rcrs.traits.RCRSConnectorTrait
 import rcrs.traits.map2d.RCRSNodeStatus
 import rcrs.{FireBrigadeAgent, ScalaAgent}
-import rescuecore2.standard.entities.{Building, FireBrigade => RescueFireBrigade, Refuge}
+import rescuecore2.standard.entities.{FireBrigade => RescueFireBrigade, StandardEntityURN, Building, Refuge}
 import rescuecore2.worldmodel.EntityID
 import tcof._
 import tcof.traits.map2d.{Map2DTrait, Node, Position}
@@ -16,7 +16,10 @@ object ProtectScenario {
       * and used in computations on the initiator of the ensemble. */
     object MirrorState extends Enumeration {
       type MirrorState = Value
-      val IdleMirror, ProtectingMirror, RefillingMirror = Value
+      //val IdleMirror, ProtectingMirror, RefillingMirror = Value
+      val IdleMirror = Value(0)
+      val ProtectingMirror = Value(1)
+      val RefillingMirror = Value(2)
     }
 
   }
@@ -51,19 +54,21 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     preActions {
       brigadePosition = agent.getPosition
       processReceivedMessages()
+
+      println(s"brigade ${entityID} (preActions)\tstate: ${brigadeState} assignedFireLocation: ${assignedFireLocation}")
     }
 
     constraints {
-      Operational &&
-      Protecting <-> (assignedFireLocation.isDefined && brigadeState == ProtectingMirror) &&
-      Refilling <-> (refillingAtRefuge || tankEmpty)
+      Operational && (Protecting -> (assignedFireLocation.isDefined && (brigadeState == ProtectingMirror))) && (Idle -> (brigadeState == IdleMirror)) && (Refilling -> (refillingAtRefuge || tankEmpty))
       // Idle is default
     }
 
     actions {
+      println(s"brigade ${entityID} (actions)\t Protecting=${states.selectedMembers.exists(_ == Protecting)} Refilling=${states.selectedMembers.exists(_ == Refilling)} Idle=${states.selectedMembers.exists(_ == Idle)}")
+
       syncFields()
-      val message = FireBrigadeToInitiator(brigadeState, brigadePosition)
-      agent.sendSpeak(time, Constants.TO_STATION, Message.encode(message))
+      sendMessages()
+      performAction()
     }
 
     private def syncFields(): Unit = {
@@ -78,6 +83,62 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       if (brigadeState != ProtectingMirror) {
         assignedFireLocation = None
       }
+    }
+
+    private def sendMessages(): Unit = {
+      val message = FireBrigadeToInitiator(brigadeState, brigadePosition)
+      agent.sendSpeak(time, Constants.TO_STATION, Message.encode(message))
+    }
+
+    private def performAction(): Unit = {
+      brigadeState match {
+        case RefillingMirror if !refillingAtRefuge =>
+          moveTo(nearestRefuge)
+
+        case ProtectingMirror =>
+          if (inExtinguishingDistanceFromFire) {
+            extinguish()
+          } else {
+            // TODO - move near fire
+            moveTo(assignedBuildingOnFire)
+          }
+
+        case _ =>
+          rest()
+      }
+    }
+
+    private def nearestRefuge: Node[RCRSNodeStatus] = {
+      // TODO - dummy implementation
+      import collection.JavaConverters._
+      val refuge = agent.model.getEntitiesOfType(StandardEntityURN.REFUGE).asScala.head.asInstanceOf[Refuge]
+      map.toNode(refuge.getID)
+    }
+
+    private def assignedBuildingOnFire: Node[RCRSNodeStatus] = {
+      map.toNode(assignedFireLocation.get)
+    }
+
+    private def inExtinguishingDistanceFromFire: Boolean = {
+      val maxDistance = agent.asInstanceOf[FireBrigadeAgent].maxDistance
+      // TODO
+      false
+    }
+
+    private def moveTo(node: Node[RCRSNodeStatus]) = {
+      // TODO - not very effective - recomputes shortest path in every step
+      val currentNode = map.toNode(agent.currentAreaId)
+      val path = map.shortestPath.to(node).pathFrom(currentNode)
+      val entityIdPath = map.toAreaID(path.get)
+      agent.sendMove(time, entityIdPath)
+    }
+
+    private def rest(): Unit = {
+      agent.sendRest(time)
+    }
+
+    def extinguish(): Unit = {
+      agent.sendExtinguish(time, assignedFireLocation.get, agent.asInstanceOf[FireBrigadeAgent].maxPower)
     }
 
     private def processReceivedMessages(): Unit = {
@@ -108,7 +169,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
       // TODO - should solve and commit be called here? IMHO yes as sendSpeak sends updated attribute values
       while (fireCoordination.solve()) {
-        println(fireCoordination.instance.toStringWithUtility)
+        //println(fireCoordination.instance.toStringWithUtility)
       }
 
       fireCoordination.commit()
@@ -116,7 +177,8 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
       for (protectionTeam <- fireCoordination.instance.protectionTeams.selectedMembers)
         for (brigade <- protectionTeam.brigades.selectedMembers) {
-          // TODO - how is component switched back to Idle? Is that automatic when component runs
+          brigade.brigadeState = ProtectingMirror
+          // TODO - switch component to Idle when fire is extinguished
           // out of water or when fire is extinguished ?
           val message = InitiatorToFireBrigade(brigade.entityID, brigade.brigadeState, brigade.assignedFireLocation)
           agent.sendSpeak(time, Constants.TO_AGENTS, Message.encode(message))
@@ -202,9 +264,15 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     private def findBuildingsOnFire(nodes: Seq[Node[RCRSNodeStatus]]): Seq[EntityID] = {
+//      nodes.map(map.toArea)
+//        .collect{ case building: Building if building.isOnFire => building }
+//        .map(_.getID)
+
+      // TODO - remove, mock
       nodes.map(map.toArea)
-        .collect{ case building: Building if building.isOnFire => building }
-        .map(_.getID)
+          .collect{ case building: Building => building }
+          .take(2)
+          .map(_.getID)
     }
   }
 }
