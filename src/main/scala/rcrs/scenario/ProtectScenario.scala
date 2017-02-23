@@ -144,7 +144,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     private def moveTo(node: Node[RCRSNodeStatus]) = {
       // TODO - not very effective - recomputes shortest path in every step
       val currentNode = map.toNode(agent.currentAreaId)
-      val path = map.shortestPath.to(node).pathFrom(currentNode)
+      val path = map.shortestPath.from(currentNode).pathTo(node)
       val entityIdPath = map.toAreaID(path.get)
       agent.sendMove(time, entityIdPath)
     }
