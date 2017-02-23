@@ -130,7 +130,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     private def nearestRefuge: Node[RCRSNodeStatus] = {
-      // TODO - dummy implementation
+      // TODO - dummy implementation, picks first found refuge
       import collection.JavaConverters._
       val refuge = agent.model.getEntitiesOfType(StandardEntityURN.REFUGE).asScala.head.asInstanceOf[Refuge]
       map.toNode(refuge.getID)
@@ -192,7 +192,6 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     actions {
       fireCoordination.init()
 
-      // TODO - should solve and commit be called here? IMHO yes as sendSpeak sends updated attribute values
       while (fireCoordination.solve()) {
         //println(fireCoordination.instance.toStringWithUtility)
       }
