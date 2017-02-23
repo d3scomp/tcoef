@@ -48,6 +48,7 @@ class FireBrigadeAgent extends ScalaAgent {
 
       component.init()
 
+      // calling solve() in loop until returns "false" - last solution is the optimal one
       while (component.solve()) {
 //        println(component.toStringWithUtility)
       }
