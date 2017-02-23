@@ -13,7 +13,7 @@ trait Component extends WithName with WithUtility with WithStateSets with WithAc
     _constraintsClauseFuns += clause _
   }
 
-  override private[tcof] def _init(stage: InitStages, config: Config): Unit = {
+  override protected[tcof] def _init(stage: InitStages, config: Config): Unit = {
     super._init(stage, config)
 
     stage match {

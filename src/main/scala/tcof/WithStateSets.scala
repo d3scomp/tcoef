@@ -4,12 +4,13 @@ import tcof.InitStages.InitStages
 import tcof.Utils._
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 trait WithStateSets extends Initializable {
   this: WithConfig =>
 
   /** A set of all potential ensembles */
-  private[tcof] val _allStates = mutable.ListBuffer.empty[State]
+  private[tcof] var _allStates: ListBuffer[State] = _
 
   def State: State = State(randomName)
   def State(name: String): State = {
@@ -60,6 +61,10 @@ trait WithStateSets extends Initializable {
     super._init(stage, config)
 
     stage match {
+      case InitStages.EraseAllStates =>
+        _allStates = mutable.ListBuffer.empty[State]
+        _stateNextId = 0
+
       case InitStages.ExtraDeclarations =>
         _rootState = State("<root>", _allStates.filter(_.parent == null))
 
@@ -69,11 +74,14 @@ trait WithStateSets extends Initializable {
       case _ =>
     }
 
-    _states._init(stage, config)
+    // TODO - this is not very pretty but I couldn't come up with better solution
+    if (stage >= InitStages.ExtraDeclarations) {
+      _states._init(stage, config)
 
-    _allStates.foreach{
-      case x: Initializable => x._init(stage, config)
-      case _ =>
+      _allStates.foreach {
+        case x: Initializable => x._init(stage, config)
+        case _ =>
+      }
     }
   }
 

@@ -31,6 +31,29 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
   this.agent = scalaAgent
 
   class FireBrigade(val entityID: EntityID, var brigadePosition: Position) extends Component {
+
+    // states are used only for resolution in component, not propagated to ensemble
+    private var _Idle: State = _
+    private def Idle: State = _Idle
+
+    private var _Protecting: State = _
+    private def Protecting: State = _Protecting
+
+    private var _Operational: State = _
+    private def Operational: State = _Protecting
+
+    override def _init(stage: InitStages, config: Config): Unit = {
+      super._init(stage, config)
+
+      stage match {
+        case InitStages.CreateCustomStates =>
+          _Idle = State
+          _Protecting = State
+          _Operational = StateOr(_Idle, _Protecting)
+        case _ =>
+      }
+    }
+
     // information transferred between initiator and component - start
 
     // fb -> initiator - fb changes state to Refilling when runs out of water
@@ -47,10 +70,6 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     // information transferred between initiator and component - end
 
 
-    // states are used only for resolution in component, not propagated to ensemble
-    private val Idle, Protecting, Refilling = State
-    private val Operational = StateOr(Idle, Protecting, Refilling) // to prevent brigade to be in multiple states at the same time
-
     preActions {
       brigadePosition = agent.getPosition
       processReceivedMessages()
@@ -59,8 +78,9 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     constraints {
-      Operational && (Protecting -> (assignedFireLocation.isDefined && (brigadeState == ProtectingMirror))) && (Idle -> (brigadeState == IdleMirror)) && (Refilling -> (refillingAtRefuge || tankEmpty))
-      // Idle is default
+      Operational &&
+        (Protecting <-> (brigadeState == ProtectingMirror)) &&
+        (Idle <-> (brigadeState == IdleMirror))
     }
 
     actions {
@@ -72,9 +92,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     private def syncFields(): Unit = {
-      brigadeState = if (states.selectedMembers.exists(_ == Refilling)) {
-        RefillingMirror
-      } else if (states.selectedMembers.exists(_ == Protecting)) {
+      brigadeState = if (states.selectedMembers.exists(_ == Protecting)) {
         ProtectingMirror
       } else {
         IdleMirror
@@ -92,8 +110,8 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
     private def performAction(): Unit = {
       brigadeState match {
-        case RefillingMirror if !refillingAtRefuge =>
-          moveTo(nearestRefuge)
+//        case RefillingMirror if !refillingAtRefuge =>
+//          moveTo(nearestRefuge)
 
         case ProtectingMirror =>
           if (inExtinguishingDistanceFromFire) {
