@@ -9,6 +9,7 @@ import rescuecore2.worldmodel.EntityID
 import tcof.InitStages.InitStages
 import tcof._
 import tcof.traits.map2d.{Map2DTrait, Node, Position}
+import rescuecore2.log.Logger
 
 object ProtectScenario {
   object FireBrigadeStatic {
@@ -68,7 +69,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     preActions {
       brigadePosition = agent.getPosition
       processReceivedMessages()
-
+      Logger.info(s"brigade ${entityID} (preActions)\tstate: ${brigadeState} assignedFireLocation: ${assignedFireLocation}")
 //      println(s"${Thread.currentThread}: brigade ${entityID} (preActions)\tstate: ${brigadeState} assignedFireLocation: ${assignedFireLocation}")
     }
 
@@ -80,7 +81,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     actions {
-//      println(s"${Thread.currentThread}: brigade ${entityID} (actions)\t Protecting=${states.selectedMembers.exists(_ == Protecting)} Refilling=${states.selectedMembers.exists(_ == Refilling)} Idle=${states.selectedMembers.exists(_ == Idle)}")
+      Logger.info(s"brigade ${entityID} (actions)\t Protecting=${states.selectedMembers.exists(_ == Protecting)} Refilling=${states.selectedMembers.exists(_ == Refilling)} Idle=${states.selectedMembers.exists(_ == Idle)}")
 
       syncFields()
       sendMessages()
@@ -150,14 +151,18 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       val currentNode = map.toNode(agent.currentAreaId)
       val path = map.shortestPath.from(currentNode).pathTo(node)
       val entityIdPath = map.toAreaID(path.get)
+
+      Logger.info(s"brigade ${entityID} moving to node ${node}")
       agent.sendMove(time, entityIdPath)
     }
 
     private def rest(): Unit = {
+      Logger.info(s"brigade ${entityID} resting")
       agent.sendRest(time)
     }
 
     def extinguish(): Unit = {
+      Logger.info(s"brigade ${entityID} extinguishing")
       agent.sendExtinguish(time, assignedFireLocation.get, agent.asInstanceOf[FireBrigadeAgent].maxPower)
     }
 
