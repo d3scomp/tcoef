@@ -75,7 +75,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       brigadePosition = agent.getPosition
       processReceivedMessages()
 
-      println(s"brigade ${entityID} (preActions)\tstate: ${brigadeState} assignedFireLocation: ${assignedFireLocation}")
+      println(s"${Thread.currentThread}: brigade ${entityID} (preActions)\tstate: ${brigadeState} assignedFireLocation: ${assignedFireLocation}")
     }
 
     constraints {
@@ -85,7 +85,8 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     actions {
-      println(s"brigade ${entityID} (actions)\t Protecting=${states.selectedMembers.exists(_ == Protecting)} Refilling=${states.selectedMembers.exists(_ == Refilling)} Idle=${states.selectedMembers.exists(_ == Idle)}")
+      //println(s"brigade ${entityID} (actions)\t Protecting=${states.selectedMembers.exists(_ == Protecting)} Refilling=${states.selectedMembers.exists(_ == Refilling)} Idle=${states.selectedMembers.exists(_ == Idle)}")
+      println(s"${Thread.currentThread}: brigade ${entityID} (actions)\t Protecting=${states.selectedMembers.exists(_ == Protecting)} Idle=${states.selectedMembers.exists(_ == Idle)}")
 
       syncFields()
       sendMessages()
