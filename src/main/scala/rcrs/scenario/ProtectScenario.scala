@@ -142,8 +142,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
     private def inExtinguishingDistanceFromFire: Boolean = {
       val maxDistance = agent.asInstanceOf[FireBrigadeAgent].maxDistance
-      // TODO
-      false
+      brigadePosition.distanceTo(assignedBuildingOnFire.center) < maxDistance
     }
 
     private def moveTo(node: Node[RCRSNodeStatus]) = {
