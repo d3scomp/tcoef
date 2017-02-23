@@ -6,6 +6,7 @@ import rcrs.traits.map2d.RCRSNodeStatus
 import rcrs.{FireBrigadeAgent, ScalaAgent}
 import rescuecore2.standard.entities.{FireBrigade => RescueFireBrigade, StandardEntityURN, Building, Refuge}
 import rescuecore2.worldmodel.EntityID
+import tcof.InitStages.InitStages
 import tcof._
 import tcof.traits.map2d.{Map2DTrait, Node, Position}
 
@@ -40,7 +41,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     private def Protecting: State = _Protecting
 
     private var _Operational: State = _
-    private def Operational: State = _Protecting
+    private def Operational: State = _Operational
 
     override def _init(stage: InitStages, config: Config): Unit = {
       super._init(stage, config)
