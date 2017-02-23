@@ -9,6 +9,8 @@ import scala.collection.mutable
 trait Component extends WithName with WithUtility with WithStateSets with WithActionsInComponent with WithConfig with CommonImplicits with Initializable {
   private[tcof] val _constraintsClauseFuns = mutable.ListBuffer.empty[() => Logical]
 
+  private var initSolver: Boolean = false
+
   def constraints(clause: => Logical): Unit = {
     _constraintsClauseFuns += clause _
   }
@@ -18,14 +20,9 @@ trait Component extends WithName with WithUtility with WithStateSets with WithAc
 
     stage match {
       case InitStages.RulesCreation =>
-        if (_constraintsClauseFuns.nonEmpty)
-          _solverModel.post(_solverModel.and(_constraintsClauseFuns.map(_.apply())))
-
-        val sm = _solverModel
-        utility match {
-          case Some(sm.IntegerIntVar(utilityVar)) => _solverModel.setObjective(Model.MAXIMIZE, utilityVar)
-          case _ =>
-        }
+        // constraints cannot be posted to solver at this place - changes to state in preActions would
+        // not be reflected in constraints
+        initSolver = true
 
       case _ =>
     }
@@ -40,7 +37,26 @@ trait Component extends WithName with WithUtility with WithStateSets with WithAc
     _executePreActions()
   }
 
-  def solve(): Boolean = _solverModel.solveAndRecord()
+  def solve(): Boolean = {
+
+    // delayed posting of constraints (to reflect changes
+    if (initSolver) {
+      if (_constraintsClauseFuns.nonEmpty) {
+        val constraints = _constraintsClauseFuns.map(_())
+        _solverModel.post(_solverModel.and(constraints))
+      }
+
+      val sm = _solverModel
+      utility match {
+        case Some(sm.IntegerIntVar(utilityVar)) => _solverModel.setObjective(Model.MAXIMIZE, utilityVar)
+        case _ =>
+      }
+
+      initSolver = false
+    }
+
+    _solverModel.solveAndRecord()
+  }
 
   def commit(): Unit = {
     _executeActions()

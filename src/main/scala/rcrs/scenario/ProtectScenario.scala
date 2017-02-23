@@ -17,10 +17,7 @@ object ProtectScenario {
       * and used in computations on the initiator of the ensemble. */
     object MirrorState extends Enumeration {
       type MirrorState = Value
-      //val IdleMirror, ProtectingMirror, RefillingMirror = Value
-      val IdleMirror = Value(0)
-      val ProtectingMirror = Value(1)
-      val RefillingMirror = Value(2)
+      val ProtectingMirror, RefillingMirror, IdleMirror = Value
     }
 
   }
@@ -34,23 +31,20 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
   class FireBrigade(val entityID: EntityID, var brigadePosition: Position) extends Component {
 
     // states are used only for resolution in component, not propagated to ensemble
-    private var _Idle: State = _
-    private def Idle: State = _Idle
-
-    private var _Protecting: State = _
-    private def Protecting: State = _Protecting
-
-    private var _Operational: State = _
-    private def Operational: State = _Operational
+    private var Protecting: State = _
+    private var Refilling: State = _
+    private var Idle: State = _
+    private var Operational: State = _
 
     override def _init(stage: InitStages, config: Config): Unit = {
       super._init(stage, config)
 
       stage match {
         case InitStages.CreateCustomStates =>
-          _Idle = State
-          _Protecting = State
-          _Operational = StateOr(_Idle, _Protecting)
+          Protecting = State
+          Refilling = State
+          Idle = State
+          Operational = StateOr(Protecting, Refilling, Idle)
         case _ =>
       }
     }
@@ -75,18 +69,18 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       brigadePosition = agent.getPosition
       processReceivedMessages()
 
-      println(s"${Thread.currentThread}: brigade ${entityID} (preActions)\tstate: ${brigadeState} assignedFireLocation: ${assignedFireLocation}")
+//      println(s"${Thread.currentThread}: brigade ${entityID} (preActions)\tstate: ${brigadeState} assignedFireLocation: ${assignedFireLocation}")
     }
 
     constraints {
       Operational &&
-        (Protecting <-> (brigadeState == ProtectingMirror)) &&
-        (Idle <-> (brigadeState == IdleMirror))
+        (Protecting -> (brigadeState == ProtectingMirror)) &&
+        (Idle -> (brigadeState == IdleMirror)) &&
+        (Refilling <-> (refillingAtRefuge || tankEmpty))
     }
 
     actions {
-      //println(s"brigade ${entityID} (actions)\t Protecting=${states.selectedMembers.exists(_ == Protecting)} Refilling=${states.selectedMembers.exists(_ == Refilling)} Idle=${states.selectedMembers.exists(_ == Idle)}")
-      println(s"${Thread.currentThread}: brigade ${entityID} (actions)\t Protecting=${states.selectedMembers.exists(_ == Protecting)} Idle=${states.selectedMembers.exists(_ == Idle)}")
+//      println(s"${Thread.currentThread}: brigade ${entityID} (actions)\t Protecting=${states.selectedMembers.exists(_ == Protecting)} Refilling=${states.selectedMembers.exists(_ == Refilling)} Idle=${states.selectedMembers.exists(_ == Idle)}")
 
       syncFields()
       sendMessages()
@@ -94,7 +88,9 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     private def syncFields(): Unit = {
-      brigadeState = if (states.selectedMembers.exists(_ == Protecting)) {
+      brigadeState = if (states.selectedMembers.exists(_ == Refilling)) {
+        RefillingMirror
+      } else if (states.selectedMembers.exists(_ == Protecting)) {
         ProtectingMirror
       } else {
         IdleMirror
@@ -112,8 +108,8 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
     private def performAction(): Unit = {
       brigadeState match {
-//        case RefillingMirror if !refillingAtRefuge =>
-//          moveTo(nearestRefuge)
+        case RefillingMirror if !refillingAtRefuge =>
+          moveTo(nearestRefuge)
 
         case ProtectingMirror =>
           if (inExtinguishingDistanceFromFire) {
