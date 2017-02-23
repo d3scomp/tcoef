@@ -75,8 +75,8 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     constraints {
       Operational &&
         (Protecting -> (brigadeState == ProtectingMirror)) &&
-        (Idle -> (brigadeState == IdleMirror)) &&
-        (Refilling <-> (refillingAtRefuge || tankEmpty))
+        (Refilling <-> (refillingAtRefuge || tankEmpty)) // automatically switch to Refilling when out of water
+        // Idle is valid but not preferred by utility function
     }
 
     actions {
@@ -85,6 +85,10 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       syncFields()
       sendMessages()
       performAction()
+    }
+
+    utility {
+      states.sum(s => if (s == Protecting) 1 else 0)
     }
 
     private def syncFields(): Unit = {
