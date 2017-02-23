@@ -63,7 +63,6 @@ trait WithStateSets extends Initializable {
     stage match {
       case InitStages.EraseAllStates =>
         _allStates = mutable.ListBuffer.empty[State]
-        _stateNextId = 0
 
       case InitStages.ExtraDeclarations =>
         _rootState = State("<root>", _allStates.filter(_.parent == null))
