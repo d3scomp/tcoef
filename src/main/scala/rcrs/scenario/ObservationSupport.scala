@@ -49,7 +49,8 @@ trait ObservationSupport {
               case building: Building =>
                 val temperature = changes.getChangedProperty(entityId, StandardPropertyURN.TEMPERATURE.toString).getValue.asInstanceOf[Int]
                 val brokenness = changes.getChangedProperty(entityId, StandardPropertyURN.BROKENNESS.toString).getValue.asInstanceOf[Int]
-                statusChanges += changedNode -> BuildingStatus(temperature, brokenness)
+                val fieryness = changes.getChangedProperty(entityId, StandardPropertyURN.FIERYNESS.toString).getValue.asInstanceOf[Int]
+                statusChanges += changedNode -> BuildingStatus(temperature, brokenness, fieryness)
             }
 
           case _ =>
@@ -83,7 +84,7 @@ trait ObservationSupport {
     def updateWorldInfo(statusMap: Map[Int, RCRSNodeStatus]) = {
       for ((id, nodeStatus) <- statusMap) {
         nodeStatus match {
-          case BuildingStatus(temperature, brokenness) =>
+          case BuildingStatus(temperature, brokenness, fieryness) =>
             val entityID = new EntityID(id)
             map.toNode(entityID).status = nodeStatus
 

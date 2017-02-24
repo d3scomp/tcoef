@@ -2,14 +2,14 @@ package rcrs.scenario
 
 import rcrs.comm._
 import rcrs.traits.RCRSConnectorTrait
-import rcrs.traits.map2d.RCRSNodeStatus
+import rcrs.traits.map2d.{BuildingStatus, RCRSNodeStatus}
 import rcrs.{FireBrigadeAgent, ScalaAgent}
-import rescuecore2.standard.entities.{FireBrigade => RescueFireBrigade, StandardEntityURN, Building, Refuge}
+import rescuecore2.log.Logger
+import rescuecore2.standard.entities.{FireBrigade => RescueFireBrigade, _}
 import rescuecore2.worldmodel.EntityID
 import tcof.InitStages.InitStages
 import tcof._
 import tcof.traits.map2d.{Map2DTrait, Node, Position}
-import rescuecore2.log.Logger
 
 object ProtectScenario {
   object FireBrigadeStatic {
@@ -24,7 +24,7 @@ object ProtectScenario {
   }
 }
 
-import ProtectScenario.FireBrigadeStatic.MirrorState._
+import rcrs.scenario.ProtectScenario.FireBrigadeStatic.MirrorState._
 
 class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] {
   this.agent = scalaAgent
@@ -69,8 +69,8 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     preActions {
       brigadePosition = agent.getPosition
       processReceivedMessages()
+
       Logger.info(s"brigade ${entityID} (preActions)\tstate: ${brigadeState} assignedFireLocation: ${assignedFireLocation}")
-//      println(s"${Thread.currentThread}: brigade ${entityID} (preActions)\tstate: ${brigadeState} assignedFireLocation: ${assignedFireLocation}")
     }
 
     constraints {
@@ -107,7 +107,9 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     private def sendMessages(): Unit = {
-      val message = FireBrigadeToInitiator(brigadeState, brigadePosition)
+      val statusMap = collectStatusChanges
+      val message = FireBrigadeToInitiator(brigadeState, brigadePosition, agent.currentAreaId, statusMap)
+      Logger.info(s"brigade ${entityID} sending ${message}")
       agent.sendSpeak(time, Constants.TO_STATION, Message.encode(message))
     }
 
@@ -175,6 +177,22 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       }
     }
 
+    private def collectStatusChanges(): Map[Int, RCRSNodeStatus] = {
+      import scala.collection.JavaConverters._
+
+      val changes = sensing.changes
+      changes.getChangedEntities.asScala
+          .map(entityID => (entityID, agent.model.getEntity(entityID)))
+          .collect {
+            case (entityID, building: Building) =>
+              val node = map.toNode(entityID)
+              val temperature = changes.getChangedProperty(entityID, StandardPropertyURN.TEMPERATURE.toString).getValue.asInstanceOf[Int]
+              val brokenness = changes.getChangedProperty(entityID, StandardPropertyURN.BROKENNESS.toString).getValue.asInstanceOf[Int]
+              val fieryNess = changes.getChangedProperty(entityID, StandardPropertyURN.FIERYNESS.toString).getValue.asInstanceOf[Int]
+              entityID.getValue -> BuildingStatus(temperature, brokenness, fieryNess)
+          }.toMap
+    }
+
     private def waterLevel: Int = agent.me.asInstanceOf[RescueFireBrigade].getWater
     private def refillingAtRefuge: Boolean = agent.location.isInstanceOf[Refuge] && waterLevel < agent.asInstanceOf[FireBrigadeAgent].maxWater
     private def tankEmpty: Boolean = waterLevel == 0
@@ -209,20 +227,44 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       // ...
     }
 
+
+
     private def processReceivedMessages(): Unit = {
       sensing.messages.foreach{
-        case (FireBrigadeToInitiator(mirrorState, position), message) =>
-          updateInitiatorKnowledge(message.getAgentID, mirrorState, position)
+        case (FireBrigadeToInitiator(mirrorState, position, currentAreaId, statusMap), message) =>
+          updateInitiatorKnowledge(message.getAgentID, mirrorState, position, currentAreaId)
+          updateModel(currentAreaId, statusMap)
 
         case _ =>
       }
     }
 
-    private def updateInitiatorKnowledge(id: EntityID, mirrorState: MirrorState, position: Position): Unit = {
+    private def updateModel(currentAreaId: EntityID, statusMap: Map[Int, RCRSNodeStatus]): Unit = {
+      // update map.nodeStatus structure
+      val nodeStatus = statusMap.map{
+        case (idx, status) =>
+        map.toNode(new EntityID(idx)) -> status
+      }
+      map.nodeStatus ++= nodeStatus
+
+      // update also agent's world model
+      statusMap.foreach{
+        case (id, status) =>
+          val building = agent.model.getEntity(new EntityID(id)).asInstanceOf[Building]
+          val buildingStatus = status.asInstanceOf[BuildingStatus]
+          building.setTemperature(buildingStatus.temperature)
+          building.setBrokenness(buildingStatus.brokenness)
+          building.setFieryness(buildingStatus.fieryness)
+      }
+    }
+
+    private def updateInitiatorKnowledge(id: EntityID, mirrorState: MirrorState, position: Position, currentAreaId: EntityID): Unit = {
       val brigade = components.collect{ case x: FireBrigade => x}.find(_.entityID == id).get
       brigade.brigadeState = mirrorState
       brigade.brigadePosition = position
-      // TODO - update position in rcrs model?
+
+      // update also agent's world model
+      agent.model.getEntity(id).asInstanceOf[RescueFireBrigade].setPosition(currentAreaId, position.x.toInt, position.y.toInt)
     }
   }
 
@@ -238,6 +280,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
     utility {
       // TODO - this utility function will always form team of 2 fire brigades
+      // - but simulation seems to form team of 3 brigades
       // The utility function should probably prefer 3 brigades, something like this:
       // brigades.sum(proximityToFire) + (brigades.cardinality * 100)
       // - "*" defined in Integer would be needed
@@ -287,15 +330,15 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     private def findBuildingsOnFire(nodes: Seq[Node[RCRSNodeStatus]]): Seq[EntityID] = {
-//      nodes.map(map.toArea)
-//        .collect{ case building: Building if building.isOnFire => building }
-//        .map(_.getID)
+      nodes.map(map.toArea)
+        .collect{ case building: Building if building.isOnFire => building }
+        .map(_.getID)
 
       // TODO - remove, mock
-      nodes.map(map.toArea)
-          .collect{ case building: Building => building }
-          .take(2)
-          .map(_.getID)
+//      nodes.map(map.toArea)
+//          .collect{ case building: Building => building }
+//          .take(2)
+//          .map(_.getID)
     }
   }
 }

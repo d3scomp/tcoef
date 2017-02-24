@@ -1,3 +1,5 @@
 package rcrs.traits.map2d
 
-case class BuildingStatus(temperature: Int, brokenness: Int) extends RCRSNodeStatus
+import rescuecore2.standard.entities.StandardEntityConstants.Fieryness
+
+case class BuildingStatus(temperature: Int, brokenness: Int, fieryness: Int) extends RCRSNodeStatus
