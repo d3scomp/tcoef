@@ -122,7 +122,6 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
           if (inExtinguishingDistanceFromFire) {
             extinguish()
           } else {
-            // TODO - move near fire
             moveTo(assignedBuildingOnFire)
           }
 
@@ -132,7 +131,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     private def nearestRefuge: Node[RCRSNodeStatus] = {
-      // TODO - dummy implementation, picks first found refuge
+      // TODO - now picks first found refuge
       import collection.JavaConverters._
       val refuge = agent.model.getEntitiesOfType(StandardEntityURN.REFUGE).asScala.head.asInstanceOf[Refuge]
       map.toNode(refuge.getID)
@@ -148,7 +147,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     private def moveTo(node: Node[RCRSNodeStatus]) = {
-      // TODO - not very effective - recomputes shortest path in every step
+      // TODO - recomputes shortest path in every step
       val currentNode = map.toNode(agent.currentAreaId)
       val path = map.shortestPath.from(currentNode).pathTo(node)
       val entityIdPath = map.toAreaID(path.get)
@@ -285,18 +284,13 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     utility {
-      // TODO - this utility function will always form team of 2 fire brigades
-      // - but simulation seems to form team of 3 brigades
-      // The utility function should probably prefer 3 brigades, something like this:
-      // brigades.sum(proximityToFire) + (brigades.cardinality * 100)
-      // - "*" defined in Integer would be needed
+      // TODO - the utility function may prefer 3 brigades
       brigades.sum(proximityToFire)
     }
 
     actuation {
       for (brigade <- brigades.selectedMembers) {
         brigade.assignedFireLocation = Some(fireLocation)
-        assignRoleAndBuildingsToProtect(brigade)
       }
     }
 
@@ -312,10 +306,6 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
         case _ => false
       }
     }
-
-    private def assignRoleAndBuildingsToProtect(brigade: FireBrigade) = {
-      // TODO - "protection role" in Protect mode not defined
-    }
   }
 
   class ExtinguishTeam(coordinator: FireStation, fireLocation: EntityID) extends Ensemble {
@@ -328,7 +318,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     private val buildingsOnFire = findBuildingsOnFire(map.nodes)
     Logger.info(s"center buildingsOnFire: ${buildingsOnFire}")
 
-    // assigns 2-3 brigades to each building - there can be many brigades unassigned
+    // assigns 2-3 brigades to each building
     val extinguishTeams = ensembles(buildingsOnFire.map(new ExtinguishTeam(coordinator, _)))
     val protectionTeams = ensembles(buildingsOnFire.map(new ProtectionTeam(coordinator, _)))
 
