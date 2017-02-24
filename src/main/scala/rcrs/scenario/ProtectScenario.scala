@@ -209,11 +209,17 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     actuation {
       fireCoordination.init()
 
+      Logger.info(s"fireCoordination init called")
+
       while (fireCoordination.solve()) {
         //println(fireCoordination.instance.toStringWithUtility)
+        Logger.info(s"fireCoordination utility: ${fireCoordination.instance.toStringWithUtility}")
       }
 
+      Logger.info(s"fireCoordination utility finished")
+
       fireCoordination.commit()
+      Logger.info(s"fireCoordination commit called")
 
 
       for (protectionTeam <- fireCoordination.instance.protectionTeams.selectedMembers)
@@ -320,7 +326,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
   class FireCoordination(coordinator: FireStation) extends RootEnsemble /* TODO - will extend just Ensamble */ {
 
     private val buildingsOnFire = findBuildingsOnFire(map.nodes)
-//    Logger.info(s"")
+    Logger.info(s"center buildingsOnFire: ${buildingsOnFire}")
 
     // assigns 2-3 brigades to each building - there can be many brigades unassigned
     val extinguishTeams = ensembles(buildingsOnFire.map(new ExtinguishTeam(coordinator, _)))
@@ -334,12 +340,6 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       nodes.map(map.toArea)
         .collect{ case building: Building if building.isOnFire => building }
         .map(_.getID)
-
-      // TODO - remove, mock
-//      nodes.map(map.toArea)
-//          .collect{ case building: Building => building }
-//          .take(2)
-//          .map(_.getID)
     }
   }
 }
