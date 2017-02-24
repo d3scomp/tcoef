@@ -31,4 +31,4 @@ libraryDependencies ++= Seq(
   // "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 )
 
-cleanFiles += (baseDirectory(_ / "precomputed.data")).value
+cleanFiles += (baseDirectory(_ / "precompute.data")).value
