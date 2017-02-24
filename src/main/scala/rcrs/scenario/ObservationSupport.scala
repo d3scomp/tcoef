@@ -23,7 +23,7 @@ trait ObservationSupport {
 
     val Observation = State
 
-    actions {
+    actuation {
       states.selectedMembers.foreach {
         case Observation => doObservation()
         case _ =>
@@ -72,7 +72,7 @@ trait ObservationSupport {
   trait ObservationReceiver {
     this: Component =>
 
-    preActions {
+    sensing {
       sensing.messages.foreach {
         case (ExplorationStatus(currentAreaId, statusMap), speak) =>
           updateWorldInfo(statusMap)

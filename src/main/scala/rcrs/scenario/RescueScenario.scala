@@ -31,7 +31,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
       Extinguishing -> (!tankEmpty)
     )
 
-    preActions {
+    sensing {
       sensing.messages.foreach{
         // Knowledge propagated from component to ensemble:
         // - buildings on fire - in ObservationSupport
@@ -50,7 +50,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
       }
     }
 
-    actions {
+    actuation {
       states.selectedMembers.foreach {
         case Extinguishing =>
           extinguishAction
@@ -108,7 +108,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
   class FireStation(entityID: EntityID, position: Position) extends CentralUnit(position) /*with ObservationReceiver with PositionReceiver*/ {
     var fireBrigadeRegistry: Map[EntityID, FireBrigade] = null
 
-    preActions {
+    sensing {
       if (fireBrigadeRegistry == null) {
         fireBrigadeRegistry = components.collect{ case fb: FireBrigade => fb}
           .map{ fb => fb.id -> fb}.toMap
@@ -133,7 +133,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
       // && explorationTeams.map(_.police).allDisjoint
     )
 
-    actions {
+    actuation {
       // nulls all assigned zones
       // TODO - the information about zones should be contained in ExplorationTeam ensamble
       // this leaks information about zones into parent ensamble
@@ -166,7 +166,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
     // utility {
     // }
 
-    actions {
+    actuation {
       checkCurrentlyExtinguishingBrigade
       selectBrigadeForExtinguishingIfNeeded
     }

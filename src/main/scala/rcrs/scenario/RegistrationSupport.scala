@@ -23,7 +23,7 @@ trait RegistrationSupport {
 
     val Register = State
 
-    preActions {
+    sensing {
       sensing.messages.foreach{
         case (RegResponse(id, sId), _) if id == agent.getID =>
           shortId = sId
@@ -37,7 +37,7 @@ trait RegistrationSupport {
       Register <-> (shortId == ShortIdUndefined)
     )
 
-    actions {
+    actuation {
       states.selectedMembers.foreach {
         case Register =>
           Logger.info(s"Sending registration request ${agent.getID}")
@@ -63,7 +63,7 @@ trait RegistrationSupport {
     // in opposite direction the sender is known (getAgentID on speak message)
     var shortIdCounter = 0
 
-    preActions {
+    sensing {
       sensing.messages.foreach {
         case (RegRequest(), speak) =>
           val id = speak.getAgentID

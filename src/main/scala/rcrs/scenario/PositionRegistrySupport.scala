@@ -15,7 +15,7 @@ trait PositionRegistrySupport {
 
     val SendPosition = State
 
-    actions {
+    actuation {
       states.selectedMembers.foreach {
         case SendPosition => sendPositionAction()
         case _ =>
@@ -39,7 +39,7 @@ trait PositionRegistrySupport {
     // initialization is delayed to preactions (components field is assigned later)
     var positionRegistry: Map[EntityID, PositionAware] = null
 
-    preActions {
+    sensing {
       if (positionRegistry == null) {
         positionRegistry = components.collect{case x: Component with PositionAware with WithEntityID => x}
           .map{x => x.id -> x}.toMap

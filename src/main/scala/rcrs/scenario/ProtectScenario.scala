@@ -66,11 +66,11 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     // information transferred between initiator and component - end
 
 
-    preActions {
+    sensing {
       brigadePosition = agent.getPosition
       processReceivedMessages()
 
-      Logger.info(s"brigade ${entityID} (preActions)\tstate: ${brigadeState} assignedFireLocation: ${assignedFireLocation}")
+      Logger.info(s"brigade ${entityID} (sensing)\tstate: ${brigadeState} assignedFireLocation: ${assignedFireLocation}")
     }
 
     constraints {
@@ -80,8 +80,8 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
         // Idle is valid but not preferred by utility function
     }
 
-    actions {
-      Logger.info(s"brigade ${entityID} (actions)\t Protecting=${states.selectedMembers.exists(_ == Protecting)} Refilling=${states.selectedMembers.exists(_ == Refilling)} Idle=${states.selectedMembers.exists(_ == Idle)}")
+    actuation {
+      Logger.info(s"brigade ${entityID} (actuation)\t Protecting=${states.selectedMembers.exists(_ == Protecting)} Refilling=${states.selectedMembers.exists(_ == Refilling)} Idle=${states.selectedMembers.exists(_ == Idle)}")
 
       syncFields()
       sendMessages()
@@ -202,11 +202,11 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
   class FireStation(val entityID: EntityID) extends Component {
     val fireCoordination = root(new FireCoordination(this))
 
-    preActions {
+    sensing {
       processReceivedMessages()
     }
 
-    actions {
+    actuation {
       fireCoordination.init()
 
       while (fireCoordination.solve()) {
@@ -287,7 +287,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       brigades.sum(proximityToFire)
     }
 
-    actions {
+    actuation {
       for (brigade <- brigades.selectedMembers) {
         brigade.assignedFireLocation = Some(fireLocation)
         assignRoleAndBuildingsToProtect(brigade)
@@ -320,6 +320,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
   class FireCoordination(coordinator: FireStation) extends RootEnsemble /* TODO - will extend just Ensamble */ {
 
     private val buildingsOnFire = findBuildingsOnFire(map.nodes)
+//    Logger.info(s"")
 
     // assigns 2-3 brigades to each building - there can be many brigades unassigned
     val extinguishTeams = ensembles(buildingsOnFire.map(new ExtinguishTeam(coordinator, _)))

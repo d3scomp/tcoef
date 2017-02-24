@@ -45,14 +45,14 @@ trait AreaExplorationSupport {
 
     val AreaExploration = State
 
-    preActions {
+    sensing {
     }
 
     constraints(
       AreaExploration -> (areaExplorationAssignedZone != null)
     )
 
-    actions {
+    actuation {
       states.selectedMembers.foreach {
         case AreaExploration => doExploration()
         case _ =>
@@ -96,7 +96,7 @@ trait AreaExplorationSupport {
 
     this: CentralUnitComponent#CentralUnit =>
 
-    preActions {
+    sensing {
       sensing.messages.foreach {
         case (ExplorationStatus(referenceAreaId, statusMap), _) =>
           val nodes = statusMap.map{
