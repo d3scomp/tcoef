@@ -168,7 +168,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     private def processReceivedMessages(): Unit = {
-      sensing.messages.foreach{
+      sensed.messages.foreach{
         case (InitiatorToFireBrigade(receiverId, mirrorState, fireLocation), _) if receiverId == agent.getID =>
           brigadeState = mirrorState
           assignedFireLocation = fireLocation
@@ -180,7 +180,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     private def collectStatusChanges(): Map[Int, RCRSNodeStatus] = {
       import scala.collection.JavaConverters._
 
-      val changes = sensing.changes
+      val changes = sensed.changes
       changes.getChangedEntities.asScala
           .map(entityID => (entityID, agent.model.getEntity(entityID)))
           .collect {
@@ -230,7 +230,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
 
     private def processReceivedMessages(): Unit = {
-      sensing.messages.foreach{
+      sensed.messages.foreach{
         case (FireBrigadeToInitiator(mirrorState, position, currentAreaId, statusMap), message) =>
           updateInitiatorKnowledge(message.getAgentID, mirrorState, position, currentAreaId)
           updateModel(currentAreaId, statusMap)

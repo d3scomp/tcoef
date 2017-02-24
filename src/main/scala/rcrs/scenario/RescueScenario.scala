@@ -32,7 +32,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
     )
 
     sensing {
-      sensing.messages.foreach{
+      sensed.messages.foreach{
         // Knowledge propagated from component to ensemble:
         // - buildings on fire - in ObservationSupport
         // - current position of agent - in PositionRegistrySupport
@@ -114,7 +114,7 @@ class RescueScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTra
           .map{ fb => fb.id -> fb}.toMap
       }
 
-      sensing.messages.foreach{
+      sensed.messages.foreach{
         case (FireBrigadeStatus(waterLevel), message) =>
           val fb = fireBrigadeRegistry(message.getAgentID)
           fb.waterLevel = waterLevel

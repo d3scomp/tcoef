@@ -45,7 +45,7 @@ trait PositionRegistrySupport {
           .map{x => x.id -> x}.toMap
       }
 
-      sensing.messages.foreach{
+      sensed.messages.foreach{
         case (CurrentPosition(x: Int, y: Int), message) =>
           val senderId = message.getAgentID
 

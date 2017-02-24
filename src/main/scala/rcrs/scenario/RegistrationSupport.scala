@@ -24,7 +24,7 @@ trait RegistrationSupport {
     val Register = State
 
     sensing {
-      sensing.messages.foreach{
+      sensed.messages.foreach{
         case (RegResponse(id, sId), _) if id == agent.getID =>
           shortId = sId
           Logger.info(s"Agent ${agent.getID} registered id: $id, shortId: $sId")
@@ -64,7 +64,7 @@ trait RegistrationSupport {
     var shortIdCounter = 0
 
     sensing {
-      sensing.messages.foreach {
+      sensed.messages.foreach {
         case (RegRequest(), speak) =>
           val id = speak.getAgentID
 

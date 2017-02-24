@@ -17,7 +17,7 @@ trait RCRSConnectorTrait extends RCRSTrait with RCRSMapAdapterTrait {
 
   def agentAs[T <: StandardEntity] = agent.asInstanceOf[ScalaAgent {type AgentEntityType = T}]
 
-  object sensing {
+  object sensed {
     var changes: ChangeSet = _
     var heard: List[Command] = _
 
@@ -28,8 +28,8 @@ trait RCRSConnectorTrait extends RCRSTrait with RCRSMapAdapterTrait {
   }
 
   def rcrsStep(time: Int, changes: ChangeSet, heard: List[Command]): Unit = {
-    sensing.changes = changes
-    sensing.heard = heard
+    sensed.changes = changes
+    sensed.heard = heard
 
     step(time)
   }

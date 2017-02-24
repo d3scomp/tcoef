@@ -34,7 +34,7 @@ trait ObservationSupport {
       val referenceNode = map.toNode(agent.currentAreaId)
       val statusChanges = mutable.Map.empty[Node[RCRSNodeStatus], RCRSNodeStatus]
 
-      val changes = sensing.changes
+      val changes = sensed.changes
 
       for (entityId <- changes.getChangedEntities.asScala) {
 
@@ -73,7 +73,7 @@ trait ObservationSupport {
     this: Component =>
 
     sensing {
-      sensing.messages.foreach {
+      sensed.messages.foreach {
         case (ExplorationStatus(currentAreaId, statusMap), speak) =>
           updateWorldInfo(statusMap)
 

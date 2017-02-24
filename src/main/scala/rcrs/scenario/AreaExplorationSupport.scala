@@ -97,7 +97,7 @@ trait AreaExplorationSupport {
     this: CentralUnitComponent#CentralUnit =>
 
     sensing {
-      sensing.messages.foreach {
+      sensed.messages.foreach {
         case (ExplorationStatus(referenceAreaId, statusMap), _) =>
           val nodes = statusMap.map{
             case (idx, status) =>
