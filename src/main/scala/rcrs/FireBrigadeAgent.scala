@@ -1,10 +1,10 @@
 package rcrs
 
-import rescuecore2.log.Logger
 import rcrs.comm._
-import rcrs.scenario.{ProtectScenario, RescueScenario}
+import rcrs.scenario.ProtectScenario
+import rescuecore2.log.Logger
 import rescuecore2.messages.Command
-import rescuecore2.standard.entities.{StandardEntityURN, FireBrigade => FireBrigadeEntity}
+import rescuecore2.standard.entities.{FireBrigade => FireBrigadeEntity, StandardEntityURN}
 import rescuecore2.worldmodel.ChangeSet
 import tcof.traits.map2d.Position
 
