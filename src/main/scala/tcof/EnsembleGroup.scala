@@ -37,4 +37,7 @@ class EnsembleGroup[+EnsembleType <: Ensemble](val name: String, private[tcof] v
 
   override def toString: String =
     s"""Ensemble group "$name":\n${indent(selectedMembers.mkString(""), 1)}"""
+
+  def toStringWithUtility: String =
+    s"""Ensemble group "$name":\n${indent(selectedMembers.map(_.toStringWithUtility).mkString(""), 1)}"""
 }

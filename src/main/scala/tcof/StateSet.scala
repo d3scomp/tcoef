@@ -29,5 +29,5 @@ class StateSet[+StateType <: State](stateId: Int, name: String, private[tcof] va
 
 
   override def toString: String =
-    s"""\nState set "$name":${indent(selectedMembers.mkString(""), 1)}"""
+    s"""\nState set "$name""""
 }

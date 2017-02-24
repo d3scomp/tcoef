@@ -1,13 +1,15 @@
 package rcrs.scenario
 
+import rcrs.comm._
+import rescuecore2.log.Logger
 import tcof.traits.map2d.{Map2D, Map2DTrait, Node, Position}
 import rcrs.traits.RCRSConnectorTrait
 import rcrs.traits.map2d.RCRSNodeStatus
 import rescuecore2.standard.entities.Human
-import tcof.Universe
+import tcof.Model
 
 trait AreaExplorationSupport {
-  this: Universe with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] =>
+  this: Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] =>
 
   case class MapZone(xIdx: Int, yIdx: Int, maxLastVisitTime: Int) {
     override def toString: String = s"MapZone($xIdx, $yIdx)"
@@ -43,14 +45,14 @@ trait AreaExplorationSupport {
 
     val AreaExploration = State
 
-    preActions {
+    sensing {
     }
 
     constraints(
       AreaExploration -> (areaExplorationAssignedZone != null)
     )
 
-    actions {
+    actuation {
       states.selectedMembers.foreach {
         case AreaExploration => doExploration()
         case _ =>
@@ -86,4 +88,28 @@ trait AreaExplorationSupport {
 
   }
 
+
+  /**
+    * Stores information about world updated from ExplorationStatus messages.
+    */
+  trait AreaExplorationCentral {
+
+    this: CentralUnitComponent#CentralUnit =>
+
+    sensing {
+      sensed.messages.foreach {
+        case (ExplorationStatus(referenceAreaId, statusMap), _) =>
+          val nodes = statusMap.map{
+            case (idx, status) =>
+              map.toNode(map.closeAreaIDs(referenceAreaId).byIdx(idx)) -> status
+          }
+
+          map.nodeStatus ++= nodes
+
+          Logger.info(s"Exploration status updated for: ${nodes.keys.map(map.toArea)}")
+
+        case _ =>
+      }
+    }
+  }
 }

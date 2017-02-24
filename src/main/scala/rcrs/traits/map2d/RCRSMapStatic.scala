@@ -15,10 +15,10 @@ import scala.collection.mutable
 object RCRSMapStatic {
   private var initialized = false
 
-  var lineOfSight = mutable.Map.empty[EntityID, Set[EntityID]]
+  val lineOfSight = mutable.Map.empty[EntityID, Set[EntityID]]
 
   case class CloseAreaIDs(byIdx: Map[Int, EntityID], byAreaId: Map[EntityID, Int])
-  var closeAreaIDs = mutable.Map.empty[EntityID, CloseAreaIDs]
+  val closeAreaIDs = mutable.Map.empty[EntityID, CloseAreaIDs]
 
   private def computeLineOfSight(config: Config, model: StandardWorldModel): Unit = {
     println("Computation of lines of sight...")
@@ -66,13 +66,15 @@ object RCRSMapStatic {
       try {
         input = new ObjectInputStream(new FileInputStream(precomputeFileName))
 
-        lineOfSight = input.readObject().asInstanceOf[mutable.Map[Int, Set[Int]]]
+        lineOfSight.clear()
+        lineOfSight ++= input.readObject().asInstanceOf[mutable.Map[Int, Set[Int]]]
           .map{ case (key, value) => new EntityID(key) -> value.map(valueID => new EntityID(valueID)) }  // transforms Map[Int, Set[Int]] to Map[EntityID, Set[EntityID]]
 
-        closeAreaIDs = input.readObject().asInstanceOf[mutable.Map[Int, (Map[Int,Int], Map[Int,Int])]]
+        closeAreaIDs.clear()
+        closeAreaIDs ++= input.readObject().asInstanceOf[mutable.Map[Int, (Map[Int,Int], Map[Int,Int])]]
           .map{ case (refAreaId, (byIdx, byAreaId)) => new EntityID(refAreaId) -> CloseAreaIDs(byIdx.mapValues(new EntityID(_)), byAreaId.map{ case (id, idx) => new EntityID(id) -> idx }) }
 
-        println(s"Loaded precomputed data from '${precomputeFileName}'")
+        println(s"Loaded precomputed data from '${precomputeFileName}', size: ${closeAreaIDs.size}")
         initialized = true
       } catch {
         case e: FileNotFoundException => println(s"File with precomputed data '${precomputeFileName}' not found")
@@ -94,7 +96,10 @@ object RCRSMapStatic {
 
         output.writeObject(lineOfSight.map{ case (key, value) => (key.getValue, value.map(_.getValue)) })  // transforms Map[EntityID, Set[EntityID]] to Map[Int, Set[Int]]
 
-        output.writeObject(closeAreaIDs.map{ case (refAreaId, CloseAreaIDs(byIdx, byAreaId)) => refAreaId.getValue -> (byIdx.mapValues(_.getValue), byAreaId.map{ case (id, idx) => id.getValue -> idx })})
+        output.writeObject(closeAreaIDs.map{
+          case (refAreaId, CloseAreaIDs(byIdx, byAreaId)) =>
+            refAreaId.getValue -> (byIdx.mapValues(_.getValue).map(identity), byAreaId.map{ case (id, idx) => id.getValue -> idx })
+        })
 
         println(s"Saved precomputed data to \'${precomputeFileName}\'")
       } finally {

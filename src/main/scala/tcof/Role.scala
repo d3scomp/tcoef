@@ -16,7 +16,7 @@ class Role[+ComponentType <: Component](val name: String, private[tcof] val pare
   }
 
   override def toString: String =
-    s"""Role "$name":\n${indent(selectedMembers.map(_ + "\n").mkString(""), 1)}"""
+    s"""Role "$name":\n"""
 
   override private[tcof] def _init(stage: InitStages, config: Config): Unit = {
     super._init(stage, config)

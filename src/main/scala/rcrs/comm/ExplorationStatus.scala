@@ -18,8 +18,9 @@ object ExplorationStatus {
 
   val buildingStatusCodec = {
     (constant(bin"01")) ::
-    ("temperature" | uint8) ::
-    ("brokenness" | uint8)
+    ("temperature" | uint(10)) ::
+    ("brokenness" | uint8) ::
+    ("fieryness" | uint4)
   }.as[BuildingStatus].upcast[RCRSNodeStatus]
 
   val codec = {

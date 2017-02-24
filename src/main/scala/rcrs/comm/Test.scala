@@ -1,8 +1,10 @@
 package rcrs.comm
 
-import rcrs.traits.map2d.RoadStatus
+import rcrs.scenario.ProtectScenario.FireBrigadeStatic.MirrorState
+import rcrs.traits.map2d.{BuildingStatus, RoadStatus}
 import rescuecore2.worldmodel.EntityID
 import scodec.bits.BitVector
+import tcof.traits.map2d.Position
 
 object Test {
   def main(args: Array[String]): Unit = {
@@ -23,5 +25,21 @@ object Test {
 
     val msg3 = Message.decode(bytes3)
     println(msg3)
+
+    val bytes4 = Message.encode(FireBrigadeToInitiator(
+      MirrorState.IdleMirror,
+      Position(416655.0,144450.0),
+      new EntityID(2922),
+      Map(
+        29952 -> BuildingStatus(0,13,0),
+        19787 -> BuildingStatus(0,100,0)
+      )
+    ))
+    println(BitVector(bytes4))
+
+    val msg4 = Message.decode(bytes4)
+    println(msg4)
+
+
   }
 }

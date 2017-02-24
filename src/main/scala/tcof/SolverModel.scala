@@ -2,11 +2,11 @@ package tcof
 
 import org.chocosolver.solver.constraints.nary.cnf.{ILogical, LogOp}
 import org.chocosolver.solver.variables.{IntVar, SetVar}
-import org.chocosolver.solver.{Model, Solution}
+import org.chocosolver.solver.{Model => ChocoModel, Solution}
 
 import scala.collection.mutable
 
-class SolverModel extends Model {
+class SolverModel extends ChocoModel {
   /** Upper bound for integer variables of the solver */
   private[tcof] val IntMaxValue = 10000 // IntVar.MAX_INT_BOUND
   /** Lower bound for integer variables of the solver */

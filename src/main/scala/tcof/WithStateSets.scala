@@ -4,12 +4,13 @@ import tcof.InitStages.InitStages
 import tcof.Utils._
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 trait WithStateSets extends Initializable {
   this: WithConfig =>
 
   /** A set of all potential ensembles */
-  private[tcof] val _allStates = mutable.ListBuffer.empty[State]
+  private[tcof] var _allStates: ListBuffer[State] = _
 
   def State: State = State(randomName)
   def State(name: String): State = {
@@ -34,10 +35,10 @@ trait WithStateSets extends Initializable {
     stateSet
   }
 
-  def StateAnd[StateType <: State](stateFirst: StateType, stateRest: StateType*): StateSetOr[StateType] = StateAnd(randomName, stateRest.+:(stateFirst))
-  def StateAnd[StateType <: State](name: String, stateFirst: StateType, stateRest: StateType*): StateSetOr[StateType] = StateAnd(name, stateRest.+:(stateFirst))
-  def StateAnd[StateType <: State](name: String, stats: Iterable[StateType]): StateSetOr[StateType] = {
-    val stateSet = new StateSetOr(_genStateId, name, new StateSetMembers(stats))
+  def StateAnd[StateType <: State](stateFirst: StateType, stateRest: StateType*): StateSetAnd[StateType] = StateAnd(randomName, stateRest.+:(stateFirst))
+  def StateAnd[StateType <: State](name: String, stateFirst: StateType, stateRest: StateType*): StateSetAnd[StateType] = StateAnd(name, stateRest.+:(stateFirst))
+  def StateAnd[StateType <: State](name: String, stats: Iterable[StateType]): StateSetAnd[StateType] = {
+    val stateSet = new StateSetAnd(_genStateId, name, new StateSetMembers(stats))
     _allStates += stateSet
     stateSet
   }
@@ -60,6 +61,9 @@ trait WithStateSets extends Initializable {
     super._init(stage, config)
 
     stage match {
+      case InitStages.EraseAllStates =>
+        _allStates = mutable.ListBuffer.empty[State]
+
       case InitStages.ExtraDeclarations =>
         _rootState = State("<root>", _allStates.filter(_.parent == null))
 
@@ -69,11 +73,14 @@ trait WithStateSets extends Initializable {
       case _ =>
     }
 
-    _states._init(stage, config)
+    // TODO - this is not very pretty but I couldn't come up with better solution
+    if (stage >= InitStages.ExtraDeclarations) {
+      _states._init(stage, config)
 
-    _allStates.foreach{
-      case x: Initializable => x._init(stage, config)
-      case _ =>
+      _allStates.foreach {
+        case x: Initializable => x._init(stage, config)
+        case _ =>
+      }
     }
   }
 
