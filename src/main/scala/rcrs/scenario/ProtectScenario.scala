@@ -205,22 +205,12 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       processReceivedMessages()
     }
 
+    ensembleResolution {
+      //establishes a number of ProtectionTeam and of ExtinguishTeam instances
+      fireCoordination.initiate()
+    }
+
     actuation {
-      fireCoordination.init()
-
-      Logger.info(s"fireCoordination init called")
-
-      while (fireCoordination.solve()) {
-        //println(fireCoordination.instance.toStringWithUtility)
-        Logger.info(s"fireCoordination utility: ${fireCoordination.instance.toStringWithUtility}")
-      }
-
-      Logger.info(s"fireCoordination utility finished")
-
-      fireCoordination.commit()
-      Logger.info(s"fireCoordination commit called")
-
-
       for (protectionTeam <- fireCoordination.instance.protectionTeams.selectedMembers)
         for (brigade <- protectionTeam.brigades.selectedMembers) {
           brigade.brigadeState = ProtectingMirror

@@ -59,6 +59,7 @@ trait Component extends WithName with WithUtility with WithStateSets with WithAc
   }
 
   def commit(): Unit = {
+    _executeEnsembleResolutionActions()
     _executeActions()
   }
 

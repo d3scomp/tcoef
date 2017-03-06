@@ -1,6 +1,23 @@
 package tcof
 
+import rescuecore2.log.Logger
+
 class RootEnsembleAnchor[EnsembleType <: RootEnsemble] private[tcof](val builder: () => EnsembleType) {
+  def initiate() = {
+    init()
+
+    Logger.info(s"RootEnsembleAnchor init called")
+
+    while (solve()) {
+      Logger.info(s"RootEnsembleAnchor utility: ${instance.toStringWithUtility}")
+    }
+
+    Logger.info(s"RootEnsembleAnchor utility finished")
+
+    commit()
+    Logger.info(s"RootEnsembleAnchor commit called")
+  }
+
   private var _solution: EnsembleType = _
 
   def instance: EnsembleType = _solution
