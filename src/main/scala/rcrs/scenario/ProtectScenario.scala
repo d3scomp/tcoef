@@ -10,6 +10,7 @@ import rescuecore2.worldmodel.EntityID
 import tcof.InitStages.InitStages
 import tcof._
 import tcof.traits.map2d.{Map2DTrait, Node, Position}
+import tcof.traits.statespace.{interpolate, StateSpaceTrait}
 
 object ProtectScenario {
   object FireBrigadeStatic {
@@ -26,7 +27,7 @@ object ProtectScenario {
 
 import rcrs.scenario.ProtectScenario.FireBrigadeStatic.MirrorState._
 
-class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] {
+class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] with StateSpaceTrait {
   this.agent = scalaAgent
 
   class FireBrigade(val entityID: EntityID, var brigadePosition: Position) extends Component {
@@ -188,6 +189,9 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
               val temperature = changes.getChangedProperty(entityID, StandardPropertyURN.TEMPERATURE.toString).getValue.asInstanceOf[Int]
               val brokenness = changes.getChangedProperty(entityID, StandardPropertyURN.BROKENNESS.toString).getValue.asInstanceOf[Int]
               val fieryNess = changes.getChangedProperty(entityID, StandardPropertyURN.FIERYNESS.toString).getValue.asInstanceOf[Int]
+
+              // TODO - map burnoutLevel to StandardEntityConstants.Fieryness
+              // TODO - add burnout level
               entityID.getValue -> BuildingStatus(temperature, brokenness, fieryNess)
           }.toMap
     }
@@ -265,17 +269,33 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
   class ProtectionTeam(coordinator: FireStation, fireLocation: EntityID) extends Ensemble {
 
+    def burnModel(node: Node[BuildingStatus]) = interpolate.linear(
+      0.0 -> 0.0,
+      0.5 -> 0.1,
+      1.0 -> 0.0
+    )
+
     val brigades = role("brigades",components.select[FireBrigade])
+
+    // TODO - asInstanceOf
+    val fireLocationNode = map.toNode(fireLocation).asInstanceOf[Node[BuildingStatus]]
+
+    val routesToFireLocation = map.shortestPath.to(fireLocationNode.asInstanceOf[Node[RCRSNodeStatus]]) // TODO
+    val firePredictor = statespace(burnModel(fireLocationNode), time, /* fireLocationNode.status.burnoutLevel */ ???)
 
     membership {
       brigades.all(brigade => (brigade.brigadeState == IdleMirror)
         || (brigade.brigadeState == ProtectingMirror) && sameLocations(brigade.assignedFireLocation)) &&
+        brigades.all(brigade => routesToFireLocation.costFrom(mapPosition(brigade)) match {
+          case None => false
+          case Some(travelTime) => firePredictor.valueAt(travelTime) < 0.9
+        }) &&
         brigades.cardinality >= 2 && brigades.cardinality <= 3
     }
 
     utility {
       // TODO - the utility function may prefer 3 brigades
-      brigades.sum(proximityToFire)
+      brigades.sum(brigade => travelTimeToUtility(routesToFireLocation.costFrom(mapPosition(brigade))))
     }
 
     actuation {
@@ -284,11 +304,21 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       }
     }
 
-    private def proximityToFire(brigade: FireBrigade): Int = {
-      val firePosition = map.toNode(fireLocation).center
-      // shifted to avoid 0 as max for empty ensemble
-      100 - (brigade.brigadePosition.distanceTo(firePosition) / 10000).round.toInt
+    private def mapPosition(fireBrigade: FireBrigade): Node[RCRSNodeStatus] = {
+      // TODO - convert brigade position to Node
+      ???
     }
+
+    def travelTimeToUtility(routeTime: Option[Double]) = routeTime match {
+      case None => 0
+      case Some(time) => 100 - time.toInt
+    }
+
+//    private def proximityToFire(brigade: FireBrigade): Int = {
+//      val firePosition = map.toNode(fireLocation).center
+//      // shifted to avoid 0 as max for empty ensemble
+//      100 - (brigade.brigadePosition.distanceTo(firePosition) / 10000).round.toInt
+//    }
 
     private def sameLocations(optionalLocation: Option[EntityID]): Boolean = {
       optionalLocation match {
@@ -301,12 +331,13 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
   class ExtinguishTeam(coordinator: FireStation, fireLocation: EntityID) extends Ensemble {
     // ...
     val brigades = role("brigades",components.select[FireBrigade])
+
   }
 
   class FireCoordination(coordinator: FireStation) extends RootEnsemble /* TODO - will extend just Ensamble */ {
 
     private val buildingsOnFire = findBuildingsOnFire(map.nodes)
-    Logger.info(s"center buildingsOnFire: ${buildingsOnFire}")
+    Logger.info(s">>>>  center buildingsOnFire: ${buildingsOnFire.length}")
 
     // assigns 2-3 brigades to each building
     val extinguishTeams = ensembles(buildingsOnFire.map(new ExtinguishTeam(coordinator, _)))
