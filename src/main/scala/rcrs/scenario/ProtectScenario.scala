@@ -309,7 +309,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       ???
     }
 
-    def travelTimeToUtility(routeTime: Option[Double]) = routeTime match {
+    private def travelTimeToUtility(routeTime: Option[Double]) = routeTime match {
       case None => 0
       case Some(time) => 100 - time.toInt
     }
