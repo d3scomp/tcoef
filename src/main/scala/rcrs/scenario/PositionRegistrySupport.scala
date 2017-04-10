@@ -15,7 +15,7 @@ trait PositionRegistrySupport {
 
     val SendPosition = State
 
-    actuation {
+    coordination {
       states.selectedMembers.foreach {
         case SendPosition => sendPositionAction()
         case _ =>

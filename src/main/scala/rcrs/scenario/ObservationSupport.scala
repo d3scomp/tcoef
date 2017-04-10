@@ -23,7 +23,7 @@ trait ObservationSupport {
 
     val Observation = State
 
-    actuation {
+    coordination {
       states.selectedMembers.foreach {
         case Observation => doObservation()
         case _ =>

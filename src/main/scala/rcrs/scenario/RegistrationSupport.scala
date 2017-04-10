@@ -37,7 +37,7 @@ trait RegistrationSupport {
       Register <-> (shortId == ShortIdUndefined)
     )
 
-    actuation {
+    coordination {
       states.selectedMembers.foreach {
         case Register =>
           Logger.info(s"Sending registration request ${agent.getID}")

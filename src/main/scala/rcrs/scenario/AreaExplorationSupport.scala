@@ -52,7 +52,7 @@ trait AreaExplorationSupport {
       AreaExploration -> (areaExplorationAssignedZone != null)
     )
 
-    actuation {
+    coordination {
       states.selectedMembers.foreach {
         case AreaExploration => doExploration()
         case _ =>

@@ -81,7 +81,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
         // Idle is valid but not preferred by utility function
     }
 
-    actuation {
+    coordination {
       Logger.info(s"brigade ${entityID} (actuation)\t Protecting=${states.selectedMembers.exists(_ == Protecting)} Refilling=${states.selectedMembers.exists(_ == Refilling)} Idle=${states.selectedMembers.exists(_ == Idle)}")
 
       syncFields()
@@ -214,7 +214,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       fireCoordination.initiate()
     }
 
-    actuation {
+    coordination {
       for (protectionTeam <- fireCoordination.instance.protectionTeams.selectedMembers)
         for (brigade <- protectionTeam.brigades.selectedMembers) {
           brigade.brigadeState = ProtectingMirror
@@ -298,7 +298,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       brigades.sum(brigade => travelTimeToUtility(routesToFireLocation.costFrom(mapPosition(brigade))))
     }
 
-    actuation {
+    coordination {
       for (brigade <- brigades.selectedMembers) {
         brigade.assignedFireLocation = Some(fireLocation)
       }
