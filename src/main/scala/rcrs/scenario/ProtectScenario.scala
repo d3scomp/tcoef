@@ -203,7 +203,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
 
   class FireStation(val entityID: EntityID) extends Component {
-    val fireCoordination = root(new FireCoordination(this))
+    val fireCoordination = root(new FireCoordination)
 
     sensing {
       processReceivedMessages()
@@ -267,7 +267,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
   }
 
-  class ProtectionTeam(coordinator: FireStation, fireLocation: EntityID) extends Ensemble {
+  class ProtectionTeam(fireLocation: EntityID) extends Ensemble {
 
     def burnModel(node: Node[BuildingStatus]) = interpolate.linear(
       0.0 -> 0.0,
@@ -328,20 +328,20 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
   }
 
-  class ExtinguishTeam(coordinator: FireStation, fireLocation: EntityID) extends Ensemble {
+  class ExtinguishTeam(fireLocation: EntityID) extends Ensemble {
     // ...
     val brigades = role("brigades",components.select[FireBrigade])
 
   }
 
-  class FireCoordination(coordinator: FireStation) extends RootEnsemble /* TODO - will extend just Ensamble */ {
+  class FireCoordination extends RootEnsemble /* TODO - will extend just Ensamble */ {
 
     private val buildingsOnFire = findBuildingsOnFire(map.nodes)
     Logger.info(s">>>>  center buildingsOnFire: ${buildingsOnFire.length}")
 
     // assigns 2-3 brigades to each building
-    val extinguishTeams = ensembles(buildingsOnFire.map(new ExtinguishTeam(coordinator, _)))
-    val protectionTeams = ensembles(buildingsOnFire.map(new ProtectionTeam(coordinator, _)))
+    val extinguishTeams = ensembles(buildingsOnFire.map(new ExtinguishTeam(_)))
+    val protectionTeams = ensembles(buildingsOnFire.map(new ProtectionTeam(_)))
 
     membership {
       (extinguishTeams.map(_.brigades) ++ protectionTeams.map(_.brigades)).allDisjoint
