@@ -1,9 +1,8 @@
 package rcrs.scenario
 
-import rcrs.traits.map2d.{RCRSNodeStatus, BuildingStatus}
-import rescuecore2.standard.entities.{Building, StandardWorldModel, StandardEntityURN, StandardEntity}
-import rescuecore2.worldmodel.EntityID
-import tcof.traits.map2d.{Map2D, Node}
+import rcrs.traits.map2d.BuildingStatus
+import rescuecore2.standard.entities._
+import tcof.traits.map2d.Node
 import tcof.traits.statespace.interpolate
 
 object ScenarioUtils {
@@ -16,7 +15,7 @@ object ScenarioUtils {
 
   def travelTimeToUtility(routeTime: Option[Double]): Int = routeTime match {
     case None => 0
-    case Some(time) => 100 - time.toInt
+    case Some(time) => 100 - (time / 10000).round.toInt
   }
 
   def burnModel(node: Node[BuildingStatus]) = interpolate.linear(
@@ -24,5 +23,10 @@ object ScenarioUtils {
     0.5 -> 0.1,
     1.0 -> 0.0
   )
+
+  def fierynessValue(fieryness: Int) = {
+    // TODO
+    0.0
+  }
 
 }

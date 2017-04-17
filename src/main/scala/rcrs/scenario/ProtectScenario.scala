@@ -1,6 +1,7 @@
 package rcrs.scenario
 
 import rcrs.comm._
+import rcrs.scenario.ScenarioUtils._
 import rcrs.traits.RCRSConnectorTrait
 import rcrs.traits.map2d.{BuildingStatus, RCRSNodeStatus}
 import rcrs.{FireBrigadeAgent, ScalaAgent}
@@ -10,9 +11,7 @@ import rescuecore2.worldmodel.EntityID
 import tcof.InitStages.InitStages
 import tcof._
 import tcof.traits.map2d.{Map2DTrait, Node, Position}
-import tcof.traits.statespace.{interpolate, StateSpaceTrait}
-
-import rcrs.scenario.ScenarioUtils._
+import tcof.traits.statespace.StateSpaceTrait
 
 object ProtectScenario {
   object FireBrigadeStatic {
@@ -277,7 +276,8 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     val fireLocationNode = map.toNode(fireLocation).asInstanceOf[Node[BuildingStatus]]
 
     val routesToFireLocation = map.shortestPath.to(fireLocationNode.asInstanceOf[Node[RCRSNodeStatus]]) // TODO
-    val firePredictor = statespace(burnModel(fireLocationNode), time, /* fireLocationNode.status.burnoutLevel */ ???)
+    val fierynessVal = if (fireLocationNode.status != null) fireLocationNode.status.fieryness else 0
+    val firePredictor = statespace(burnModel(fireLocationNode), time, fierynessValue(fierynessVal))
 
     membership {
       brigades.all(brigade => (brigade.brigadeState == IdleMirror)
@@ -300,9 +300,15 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       }
     }
 
+    private def proximityToFire(brigade: FireBrigade): Int = {
+      val firePosition = map.toNode(fireLocation).center
+      // shifted to avoid 0 as max for empty ensemble
+      100 - (brigade.brigadePosition.distanceTo(firePosition) / 10000).round.toInt
+    }
+
     private def mapPosition(fireBrigade: FireBrigade): Node[RCRSNodeStatus] = {
-      // TODO - convert brigade position to Node
-      ???
+      val human: Human = scalaAgent.model.getEntity(fireBrigade.entityID).asInstanceOf[Human]
+      map.toNode(human.getPosition)
     }
 
     private def sameLocations(optionalLocation: Option[EntityID]): Boolean = {
