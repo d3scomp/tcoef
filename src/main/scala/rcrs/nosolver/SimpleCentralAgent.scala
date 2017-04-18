@@ -14,6 +14,11 @@ import tcof.traits.map2d.{Map2DTrait, Node, Position}
 import tcof.traits.statespace.StateSpaceTrait
 
 
+// In code with solver, functionality of this class is contained in:
+// - CentralAgent
+// - ProtectionScenario.Firestation,
+// - ProtectionScenario.ProtectionTeam, ProtectionScenario.ExtinguishTeam, ProtectionScenario.FireCoordination (description of ensembles)
+//
 class SimpleCentralAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] with RCRSMapAdapterTrait /* added inherit map methods */ with StateSpaceTrait {
   override type AgentEntityType = Building
 
@@ -42,8 +47,14 @@ class SimpleCentralAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] with
       // sensing - process heard messages
       processReceivedMessages(heard)
 
+      val startTime = System.currentTimeMillis
+
       // ensembleResolution - compute solution with highest utility and assign it to SimpleFireBrigades
       val changedBrigades = resolveEnsembles(time)
+
+      val endTime = System.currentTimeMillis
+      val timeElapsed = endTime - startTime
+      Logger.info(s">>>> Time taken: ${timeElapsed} ms")
 
       // coordination - send message to changed brigades
       coordination(changedBrigades, time)
@@ -102,9 +113,12 @@ class SimpleCentralAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] with
     // TODO - break after given number of steps?
     // NOTE - more effective would be to compute maximum
     // together with filtering (prev. step)
-    val groupWithMaxUtility = filteredGroupsWithTargets.maxBy{_.map(trav).sum}
-
-    groupWithMaxUtility
+    if (filteredGroupsWithTargets.isEmpty) {
+      Nil
+    } else {
+      val groupWithMaxUtility = filteredGroupsWithTargets.maxBy{_.map(trav).sum}
+      groupWithMaxUtility
+    }
   }
 
   // TODO - copy paste
