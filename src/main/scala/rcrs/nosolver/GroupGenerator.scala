@@ -61,9 +61,6 @@ object GroupGenerator {
       perms.map(_.take(n)).toSet.toList
     }
 
-    val groupSize = groupList.head.size
-    //val perms = genPermutations(groupSize)(permList)
-
     // with each group zip all permutations
     val groupsWithOptTargets = groupList.flatMap{g =>
       val perms = genPermutations(permList)(g.size)
