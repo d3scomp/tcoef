@@ -1,6 +1,7 @@
 package rcrs.scenario
 
 import rcrs.comm._
+import rcrs.scenario.MirrorState._
 import rcrs.scenario.ScenarioUtils._
 import rcrs.traits.RCRSConnectorTrait
 import rcrs.traits.map2d.{BuildingStatus, RCRSNodeStatus}
@@ -12,21 +13,6 @@ import tcof.InitStages.InitStages
 import tcof._
 import tcof.traits.map2d.{Map2DTrait, Node, Position}
 import tcof.traits.statespace.StateSpaceTrait
-
-object ProtectScenario {
-  object FireBrigadeStatic {
-
-    /** Representation of the component's state, transferred between component and ensemble
-      * and used in computations on the initiator of the ensemble. */
-    object MirrorState extends Enumeration {
-      type MirrorState = Value
-      val ProtectingMirror, RefillingMirror, IdleMirror = Value
-    }
-
-  }
-}
-
-import rcrs.scenario.ProtectScenario.FireBrigadeStatic.MirrorState._
 
 class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] with StateSpaceTrait {
   this.agent = scalaAgent
@@ -185,8 +171,8 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       changes.getChangedEntities.asScala
           .map(entityID => (entityID, agent.model.getEntity(entityID)))
           .collect {
-            case (entityID, building: Building) =>
-              val node = map.toNode(entityID)
+            case (entityID, _) =>
+//              val node = map.toNode(entityID)
               val temperature = changes.getChangedProperty(entityID, StandardPropertyURN.TEMPERATURE.toString).getValue.asInstanceOf[Int]
               val brokenness = changes.getChangedProperty(entityID, StandardPropertyURN.BROKENNESS.toString).getValue.asInstanceOf[Int]
               val fieryNess = changes.getChangedProperty(entityID, StandardPropertyURN.FIERYNESS.toString).getValue.asInstanceOf[Int]
@@ -300,11 +286,11 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       }
     }
 
-    private def proximityToFire(brigade: FireBrigade): Int = {
-      val firePosition = map.toNode(fireLocation).center
-      // shifted to avoid 0 as max for empty ensemble
-      100 - (brigade.brigadePosition.distanceTo(firePosition) / 10000).round.toInt
-    }
+//    private def proximityToFire(brigade: FireBrigade): Int = {
+//      val firePosition = map.toNode(fireLocation).center
+//      // shifted to avoid 0 as max for empty ensemble
+//      100 - (brigade.brigadePosition.distanceTo(firePosition) / 10000).round.toInt
+//    }
 
     private def mapPosition(fireBrigade: FireBrigade): Node[RCRSNodeStatus] = {
       val human: Human = scalaAgent.model.getEntity(fireBrigade.entityID).asInstanceOf[Human]

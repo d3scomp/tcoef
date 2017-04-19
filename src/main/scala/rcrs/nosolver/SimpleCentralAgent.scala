@@ -6,8 +6,8 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.events.EventHandler
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator
-import rcrs.scenario.ProtectScenario.FireBrigadeStatic.MirrorState
-import rcrs.scenario.ProtectScenario.FireBrigadeStatic.MirrorState._
+import rcrs.scenario.MirrorState
+import rcrs.scenario.MirrorState._
 import rescuecore2.config.Config
 import rescuecore2.log.Logger
 import rescuecore2.messages.Command

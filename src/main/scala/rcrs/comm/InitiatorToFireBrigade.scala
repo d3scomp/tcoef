@@ -1,6 +1,6 @@
 package rcrs.comm
 
-import rcrs.scenario.ProtectScenario.FireBrigadeStatic.MirrorState.MirrorState
+import rcrs.scenario.MirrorState.MirrorState
 import rescuecore2.worldmodel.EntityID
 import scodec.bits.BitVector
 import scodec.codecs._

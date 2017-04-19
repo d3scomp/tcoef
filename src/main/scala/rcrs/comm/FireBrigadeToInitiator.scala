@@ -1,6 +1,6 @@
 package rcrs.comm
 
-import rcrs.scenario.ProtectScenario.FireBrigadeStatic.MirrorState.MirrorState
+import rcrs.scenario.MirrorState.MirrorState
 import rcrs.traits.map2d.{BuildingStatus, RCRSNodeStatus}
 import rescuecore2.worldmodel.EntityID
 import scodec._
