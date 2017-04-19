@@ -2,8 +2,6 @@ package rcrs.nosolver
 
 import java.util.{Collection, EnumSet}
 
-import org.apache.commons.math3.analysis.interpolation.{LinearInterpolator, SplineInterpolator}
-import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.events.EventHandler
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator
@@ -361,33 +359,15 @@ private[nosolver] abstract class ScalaAgent {
     case _ => null
   }
 
-  def getPosition = me match {
-    case area: Area => new Position(area.getX, area.getY)
-    case human: Human => new Position(human.getX, human.getY)
-    case _ => null
-  }
-
   def config = rcrsAgent.delegateConfig
 
   def model = rcrsAgent.delegateModel
 
   def me = rcrsAgent.delegateMe
 
-  def location = rcrsAgent.delegateLocation
-
-  def getID = rcrsAgent.delegateGetID
-
-  def sendMove(time: Int, path: List[EntityID]) = rcrsAgent.delegateSendMove(time, path)
-
-  def sendMove(time: Int, path: List[EntityID], destX: Int, destY: Int) = rcrsAgent.delegateSendMove(time, path, destX, destY)
-
   def sendSubscribe(time: Int, channels: Int*) = rcrsAgent.delegateSendSubscribe(time, channels: _*)
 
-  def sendRest(time: Int) = rcrsAgent.delegateSendRest(time)
-
   def sendSpeak(time: Int, channel: Int, data: Array[Byte]) = rcrsAgent.delegateSendSpeak(time, channel, data)
-
-  def sendExtinguish(time: Int, target: EntityID, water: Int) = rcrsAgent.delegateSendExtinguish(time, target, water)
 
   var ignoreAgentCommandsUntil: Int = _
 
@@ -410,21 +390,11 @@ private[nosolver] abstract class ScalaAgent {
 
     def delegateMe = me
 
-    def delegateLocation = location
-
-    def delegateGetID = getID
-
-    def delegateSendMove(time: Int, path: List[EntityID]) = sendMove(time, ListBuffer(path: _*).asJava)
-
     def delegateSendMove(time: Int, path: List[EntityID], destX: Int, destY: Int) = sendMove(time, ListBuffer(path: _*).asJava, destX, destY)
 
     def delegateSendSubscribe(time: Int, channels: Int*) = sendSubscribe(time, channels: _*)
 
-    def delegateSendRest(time: Int) = sendRest(time)
-
     def delegateSendSpeak(time: Int, channel: Int, data: Array[Byte]) = sendSpeak(time, channel, data)
-
-    def delegateSendExtinguish(time: Int, target: EntityID, water: Int) = sendExtinguish(time, target, water)
   }
 
   val rcrsAgent = new Agent
@@ -458,23 +428,6 @@ private[nosolver] trait RCRSTrait extends Trait {
   def agent: ScalaAgent
 }
 
-
-private[nosolver] object interpolate {
-  private def interpolant(breakpoints: Seq[(Double, Double)], fun: PolynomialSplineFunction): Double => Double = {
-    (x: Double) => {
-      if (x > breakpoints.last._1) breakpoints.last._2
-      else if (x < breakpoints.head._1) breakpoints.head._1
-      else fun.value(x)
-    }
-  }
-
-  def linear(breakpoints: (Double, Double)*): Double => Double =
-    interpolant(breakpoints, new LinearInterpolator().interpolate(breakpoints.map(_._1).toArray, breakpoints.map(_._2).toArray))
-
-  def spline(breakpoints: (Double, Double)*): Double => Double =
-    interpolant(breakpoints, new SplineInterpolator().interpolate(breakpoints.map(_._1).toArray, breakpoints.map(_._2).toArray))
-}
-
 private[nosolver] abstract class StateSpaceModel private[nosolver](val model: FirstOrderDifferentialEquations, val t0: Double, val y0: Array[Double]) {
 
   class StopEvent(val targetValue: Double, val idx: Int) extends EventHandler {
@@ -485,14 +438,6 @@ private[nosolver] abstract class StateSpaceModel private[nosolver](val model: Fi
     override def g(t: Double, y: Array[Double]) = y(idx) - targetValue
 
     override def resetState(t: Double, y: Array[Double]) = {}
-  }
-
-  protected def time(idx: Int, value: Double, limitTime: Double): Double = {
-    val dp853 = new DormandPrince853Integrator(1.0e-8, 100.0, 1.0e-10, 1.0e-10)
-    dp853.addEventHandler(new StopEvent(value, idx), 0.1, 1.0e-9, 1000)
-
-    var y = new Array[Double](y0.size)
-    dp853.integrate(model, t0, y0, limitTime, y)
   }
 
   protected def value(time: Double): Array[Double] = {
@@ -512,19 +457,8 @@ private[nosolver] class StateSpaceModel1 private[nosolver](model: FirstOrderDiff
   def valueAt(time: Double): Double = value(time)(0)
 }
 
-//  private[this] class StateSpaceModelN private[nosolver](model: FirstOrderDifferentialEquations, t0: Double, y0: Array[Double]) extends StateSpaceModel(model, t0, y0) {
-//    private[this] def valueAt(time: Double): Array[Double] = value(time)
-//
-//    private[this] def timeOf(idx: Int, value: Double, limitTime: Double) = time(idx, value, limitTime)
-//  }
-
-//}
-
 private[nosolver] trait Trait {
   def init(): Unit = {
-  }
-
-  protected def traitStep(): Unit = {
   }
 
 }
