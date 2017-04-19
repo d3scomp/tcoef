@@ -2,17 +2,17 @@ package rcrs.scenario
 
 import rcrs.comm._
 import rcrs.scenario.MirrorState._
-import rcrs.scenario.ScenarioUtils._
 import rcrs.traits.RCRSConnectorTrait
 import rcrs.traits.map2d.{BuildingStatus, RCRSNodeStatus}
 import rcrs.{FireBrigadeAgent, ScalaAgent}
 import rescuecore2.log.Logger
+import rescuecore2.standard.entities.StandardEntityConstants.Fieryness
 import rescuecore2.standard.entities.{FireBrigade => RescueFireBrigade, _}
 import rescuecore2.worldmodel.EntityID
 import tcof.InitStages.InitStages
 import tcof._
 import tcof.traits.map2d.{Map2DTrait, Node, Position}
-import tcof.traits.statespace.StateSpaceTrait
+import tcof.traits.statespace.{StateSpaceTrait, interpolate}
 
 class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTrait with Map2DTrait[RCRSNodeStatus] with StateSpaceTrait {
   this.agent = scalaAgent
@@ -172,7 +172,6 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
           .map(entityID => (entityID, agent.model.getEntity(entityID)))
           .collect {
             case (entityID, _) =>
-//              val node = map.toNode(entityID)
               val temperature = changes.getChangedProperty(entityID, StandardPropertyURN.TEMPERATURE.toString).getValue.asInstanceOf[Int]
               val brokenness = changes.getChangedProperty(entityID, StandardPropertyURN.BROKENNESS.toString).getValue.asInstanceOf[Int]
               val fieryNess = changes.getChangedProperty(entityID, StandardPropertyURN.FIERYNESS.toString).getValue.asInstanceOf[Int]
@@ -258,10 +257,9 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
     val brigades = role("brigades",components.select[FireBrigade])
 
-    // TODO - asInstanceOf
     val fireLocationNode = map.toNode(fireLocation).asInstanceOf[Node[BuildingStatus]]
 
-    val routesToFireLocation = map.shortestPath.to(fireLocationNode.asInstanceOf[Node[RCRSNodeStatus]]) // TODO
+    val routesToFireLocation = map.shortestPath.to(fireLocationNode.asInstanceOf[Node[RCRSNodeStatus]])
     val fierynessVal = if (fireLocationNode.status != null) fireLocationNode.status.fieryness else 0
     val firePredictor = statespace(burnModel(fireLocationNode), time, fierynessValue(fierynessVal))
 
@@ -286,12 +284,6 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       }
     }
 
-//    private def proximityToFire(brigade: FireBrigade): Int = {
-//      val firePosition = map.toNode(fireLocation).center
-//      // shifted to avoid 0 as max for empty ensemble
-//      100 - (brigade.brigadePosition.distanceTo(firePosition) / 10000).round.toInt
-//    }
-
     private def mapPosition(fireBrigade: FireBrigade): Node[RCRSNodeStatus] = {
       val human: Human = scalaAgent.model.getEntity(fireBrigade.entityID).asInstanceOf[Human]
       map.toNode(human.getPosition)
@@ -301,6 +293,40 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       optionalLocation match {
         case Some(location) => fireLocation == location
         case _ => false
+      }
+    }
+
+    def findEntities[T <: StandardEntity](model: StandardWorldModel, urn: StandardEntityURN): Iterable[T] = {
+      import scala.collection.JavaConverters._
+      model.getEntitiesOfType(urn).asScala
+        .map{_.asInstanceOf[T]}
+    }
+
+    def travelTimeToUtility(routeTime: Option[Double]): Int = routeTime match {
+      case None => 0
+      case Some(time) => 100 - (time / 10000).round.toInt
+    }
+
+    def burnModel(node: Node[BuildingStatus]) = interpolate.linear(
+      0.0 -> 0.0,
+      0.5 -> 0.1,
+      1.0 -> 0.0
+    )
+
+    def fierynessValue(fieryness: Int): Double = {
+      import Fieryness._
+      val f = Fieryness.values()(fieryness)
+      f match {
+        case UNBURNT | WATER_DAMAGE =>
+          0.0
+        case HEATING =>
+          0.25
+        case BURNING =>
+          0.5
+        case INFERNO =>
+          0.75
+        case _ =>
+          1.0
       }
     }
   }
@@ -324,7 +350,6 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       (extinguishTeams.map(_.brigades) ++ protectionTeams.map(_.brigades)).allDisjoint
     }
 
-    // TODO - copy + paste, but hard to move to ScenarioUtils (toArea method)
     private def findBuildingsOnFire(nodes: Seq[Node[RCRSNodeStatus]]): Seq[EntityID] = {
       nodes.map(map.toArea)
         .collect{ case building: Building if building.isOnFire => building.getID }

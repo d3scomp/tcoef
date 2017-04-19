@@ -12,6 +12,7 @@ import rescuecore2.config.Config
 import rescuecore2.log.Logger
 import rescuecore2.messages.Command
 import rescuecore2.standard.components.StandardAgent
+import rescuecore2.standard.entities.StandardEntityConstants.Fieryness
 import rescuecore2.standard.entities.{FireBrigade => RescueFireBrigade, _}
 import rescuecore2.standard.messages.AKSpeak
 import rescuecore2.worldmodel.{ChangeSet, EntityID}
@@ -300,11 +301,45 @@ class SimpleCentralAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] with
     * Creates FireBrigade components and assigns them position from configuration.
     */
   private def createSimpleFireBrigades: Map[EntityID, SimpleFireBrigade] = {
-    ScenarioUtils.findEntities[RescueFireBrigade](model, StandardEntityURN.FIRE_BRIGADE).map { fb =>
+    findEntities[RescueFireBrigade](model, StandardEntityURN.FIRE_BRIGADE).map { fb =>
       val model = rcrsAgent.delegateModel
       val location = fb.getLocation(model)
       fb.getID -> new SimpleFireBrigade(fb.getID, Position(location.first.toDouble, location.second.toDouble))
     }.toMap
+  }
+
+  def findEntities[T <: StandardEntity](model: StandardWorldModel, urn: StandardEntityURN): Iterable[T] = {
+    import scala.collection.JavaConverters._
+    model.getEntitiesOfType(urn).asScala
+      .map{_.asInstanceOf[T]}
+  }
+
+  def travelTimeToUtility(routeTime: Option[Double]): Int = routeTime match {
+    case None => 0
+    case Some(time) => 100 - (time / 10000).round.toInt
+  }
+
+  def burnModel(node: Node[BuildingStatus]) = interpolate.linear(
+    0.0 -> 0.0,
+    0.5 -> 0.1,
+    1.0 -> 0.0
+  )
+
+  def fierynessValue(fieryness: Int): Double = {
+    import Fieryness._
+    val f = Fieryness.values()(fieryness)
+    f match {
+      case UNBURNT | WATER_DAMAGE =>
+        0.0
+      case HEATING =>
+        0.25
+      case BURNING =>
+        0.5
+      case INFERNO =>
+        0.75
+      case _ =>
+        1.0
+    }
   }
 
   override protected def getRequestedEntityURNs: List[StandardEntityURN] = List(
@@ -839,32 +874,6 @@ trait WithAreaExploration[NodeStatusType] {
     }
 
   }
-}
-
-object ScenarioUtils {
-
-  def findEntities[T <: StandardEntity](model: StandardWorldModel, urn: StandardEntityURN): Iterable[T] = {
-    import scala.collection.JavaConverters._
-    model.getEntitiesOfType(urn).asScala
-      .map{_.asInstanceOf[T]}
-  }
-
-  def travelTimeToUtility(routeTime: Option[Double]): Int = routeTime match {
-    case None => 0
-    case Some(time) => 100 - (time / 10000).round.toInt
-  }
-
-  def burnModel(node: Node[BuildingStatus]) = interpolate.linear(
-    0.0 -> 0.0,
-    0.5 -> 0.1,
-    1.0 -> 0.0
-  )
-
-  def fierynessValue(fieryness: Int) = {
-    // TODO
-    0.0
-  }
-
 }
 
 case class BuildingStatus(temperature: Int, brokenness: Int, fieryness: Int) extends RCRSNodeStatus
