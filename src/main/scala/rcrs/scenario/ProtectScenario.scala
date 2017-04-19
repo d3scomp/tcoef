@@ -171,13 +171,10 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       changes.getChangedEntities.asScala
           .map(entityID => (entityID, agent.model.getEntity(entityID)))
           .collect {
-            case (entityID, _) =>
+            case (entityID, _: Building) =>
               val temperature = changes.getChangedProperty(entityID, StandardPropertyURN.TEMPERATURE.toString).getValue.asInstanceOf[Int]
               val brokenness = changes.getChangedProperty(entityID, StandardPropertyURN.BROKENNESS.toString).getValue.asInstanceOf[Int]
               val fieryNess = changes.getChangedProperty(entityID, StandardPropertyURN.FIERYNESS.toString).getValue.asInstanceOf[Int]
-
-              // TODO - map burnoutLevel to StandardEntityConstants.Fieryness
-              // TODO - add burnout level
               entityID.getValue -> BuildingStatus(temperature, brokenness, fieryNess)
           }.toMap
     }

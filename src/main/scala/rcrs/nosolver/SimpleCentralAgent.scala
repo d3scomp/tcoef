@@ -225,7 +225,7 @@ class SimpleCentralAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] with
           case Some(travelTime) =>
             val fireLocationNode = fire.asInstanceOf[Node[BuildingStatus]]
             val fierynessVal = if (fireLocationNode.status != null) fireLocationNode.status.fieryness else 0
-            val firePredictor = statespace(ScenarioUtils.burnModel(fireLocationNode), time, ScenarioUtils.fierynessValue(fierynessVal))
+            val firePredictor = statespace(burnModel(fireLocationNode), time, fierynessValue(fierynessVal))
             firePredictor.valueAt(travelTime) < 0.9
         })
     })
@@ -244,7 +244,6 @@ class SimpleCentralAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] with
     }
   }
 
-  // TODO - copy paste
   private def mapPosition(fireBrigade: SimpleFireBrigade): Node[RCRSNodeStatus] = {
     val human: Human = model.getEntity(fireBrigade.entityID).asInstanceOf[Human]
     map.toNode(human.getPosition)
@@ -258,7 +257,6 @@ class SimpleCentralAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] with
     }
   }
 
-  // TODO - copy paste
   private def processReceivedMessages(heard: List[Command]): Unit = {
     heard.foreach {
       case speak: AKSpeak => {
@@ -352,7 +350,6 @@ class SimpleCentralAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] with
     var assignedFireLocation: Option[Node[RCRSNodeStatus]] = None
   }
 
-  // TODO - copy + paste, but hard to move to ScenarioUtils (toArea method)
   private def findBuildingsOnFire(nodes: Seq[Node[RCRSNodeStatus]]): Seq[Node[RCRSNodeStatus]] = {
     nodes.map(map.toArea)
       .collect { case building: Building if building.isOnFire => map.toNode(building.getID) }
