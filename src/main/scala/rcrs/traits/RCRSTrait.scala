@@ -1,9 +1,7 @@
 package rcrs.traits
 
-import tcof.traits.Trait
 import rcrs.ScalaAgent
-import rescuecore2.messages.Command
-import rescuecore2.worldmodel.ChangeSet
+import tcof.traits.Trait
 
 trait RCRSTrait extends Trait {
   def agent: ScalaAgent

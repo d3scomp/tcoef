@@ -2,12 +2,11 @@ package rcrs
 
 import java.util.{Collection, EnumSet}
 
-import tcof.traits.map2d.Position
-import rcrs.traits.RCRSTrait
 import rescuecore2.messages.Command
 import rescuecore2.standard.components.StandardAgent
 import rescuecore2.standard.entities.{Area, Human, StandardEntity, StandardEntityURN}
 import rescuecore2.worldmodel.{ChangeSet, EntityID}
+import tcof.traits.map2d.Position
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
