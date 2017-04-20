@@ -149,7 +149,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       agent.sendRest(time)
     }
 
-    def extinguish(): Unit = {
+    private def extinguish(): Unit = {
       Logger.info(s"brigade ${entityID} extinguishing")
       agent.sendExtinguish(time, assignedFireLocation.get, agent.asInstanceOf[FireBrigadeAgent].maxPower)
     }

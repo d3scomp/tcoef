@@ -390,14 +390,14 @@ private[nosolver] abstract class ScalaAgent {
   }
 
   def config = rcrsAgent.delegateConfig
-
   def model = rcrsAgent.delegateModel
-
   def me = rcrsAgent.delegateMe
-
+  def location = rcrsAgent.delegateLocation
+  def sendMove(time: Int, path: List[EntityID]) = rcrsAgent.delegateSendMove(time, path)
   def sendSubscribe(time: Int, channels: Int*) = rcrsAgent.delegateSendSubscribe(time, channels: _*)
-
+  def sendRest(time: Int) = rcrsAgent.delegateSendRest(time)
   def sendSpeak(time: Int, channel: Int, data: Array[Byte]) = rcrsAgent.delegateSendSpeak(time, channel, data)
+  def sendExtinguish(time: Int, target: EntityID, water: Int) = rcrsAgent.delegateSendExtinguish(time, target, water)
 
   var ignoreAgentCommandsUntil: Int = _
 
@@ -408,23 +408,19 @@ private[nosolver] abstract class ScalaAgent {
 
     override protected def postConnect() {
       super.postConnect()
-
       ignoreAgentCommandsUntil = config.getIntValue(kernel.KernelConstants.IGNORE_AGENT_COMMANDS_KEY)
-
       sagent.postConnect()
     }
 
     def delegateConfig = config
-
     def delegateModel = model
-
     def delegateMe = me
-
-    def delegateSendMove(time: Int, path: List[EntityID], destX: Int, destY: Int) = sendMove(time, ListBuffer(path: _*).asJava, destX, destY)
-
+    def delegateLocation = location
+    def delegateSendMove(time: Int, path: List[EntityID]) = sendMove(time, ListBuffer(path: _*).asJava)
     def delegateSendSubscribe(time: Int, channels: Int*) = sendSubscribe(time, channels: _*)
-
+    def delegateSendRest(time: Int) = sendRest(time)
     def delegateSendSpeak(time: Int, channel: Int, data: Array[Byte]) = sendSpeak(time, channel, data)
+    def delegateSendExtinguish(time: Int, target: EntityID, water: Int) = sendExtinguish(time, target, water)
   }
 
   val rcrsAgent = new Agent
