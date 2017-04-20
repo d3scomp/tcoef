@@ -1,0 +1,16 @@
+nosolver (total: 1064)
+- LineOfSightNoSolver (149 SLOC)- copied class LineOfSight (java class), 
+    I had to copy it as I needed to import different classes
+- GroupGenerator (40)
+- SimpleCentralAgent (758) (copied tcof libs, I tried to delete unused code)
+- SimpleFireBrigade (112)
+- MirrorState (5)
+
+with solverem (total 409) (code specific for scenario - uses tcof):
+- ProtectScenario (256)
+- CentralAgent (60)
+- Constants (5)
+- Message (44)
+- InitiatorToFireBrigade (14)
+- FireBrigadeToInitiator (25)
+- MirrorState (5)
