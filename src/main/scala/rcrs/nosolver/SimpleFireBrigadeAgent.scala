@@ -78,7 +78,7 @@ class SimpleFireBrigadeAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] 
     val brigadePositionEntityID = me.getPosition
     val brigadePosition = Position(me.getX, me.getY)
     val message = FireBrigadeToInitiator(brigadeState, brigadePosition, brigadePositionEntityID, statusMap)
-    Logger.info(s"brigade ${me.getID} sending ${message}")
+//    Logger.info(s"brigade ${me.getID} sending ${message}")
     sendSpeak(time, Constants.TO_STATION, Message.encode(message))
   }
 
@@ -119,17 +119,17 @@ class SimpleFireBrigadeAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] 
     val path = map.shortestPath.from(currentNode).pathTo(node)
     val entityIdPath = map.toAreaID(path.get)
 
-    Logger.info(s"brigade ${me.getID} moving to node ${node}")
+//    Logger.info(s"brigade ${me.getID} moving to node ${node}")
     sendMove(time, entityIdPath)
   }
 
   private def rest(time: Int): Unit = {
-    Logger.info(s"brigade ${me.getID} resting")
+//    Logger.info(s"brigade ${me.getID} resting")
     sendRest(time)
   }
 
   private def extinguish(time: Int): Unit = {
-    Logger.info(s"brigade ${me.getID} extinguishing")
+//    Logger.info(s"brigade ${me.getID} extinguishing")
     sendExtinguish(time, assignedFireLocation.get, maxPower)
   }
 

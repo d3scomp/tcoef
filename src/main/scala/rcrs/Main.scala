@@ -1,5 +1,6 @@
 package rcrs
 
+import rcrs.nosolver.{SimpleCentralAgent, SimpleFireBrigadeAgent}
 import rescuecore2.Constants
 import rescuecore2.components.TCPComponentLauncher
 import rescuecore2.config.Config
@@ -24,12 +25,14 @@ object Main {
     val launcher = new TCPComponentLauncher(host, port, config)
 
     Logger.info("Connecting fire brigades ... ")
-    for (_ <- 1 to 4) {
+    for (_ <- 1 to 5) {
       launcher.connect(new FireBrigadeAgent().rcrsAgent)
+//      launcher.connect(new SimpleFireBrigadeAgent().rcrsAgent)
     }
 
     Logger.info("Connecting central ... ")
     launcher.connect(new CentralAgent().rcrsAgent)
+//    launcher.connect(new SimpleCentralAgent().rcrsAgent)
 
     Logger.info("success")
   }

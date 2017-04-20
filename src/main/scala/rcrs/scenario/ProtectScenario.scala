@@ -58,7 +58,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       brigadePosition = agent.getPosition
       processReceivedMessages()
 
-      Logger.info(s"brigade ${entityID} (sensing)\tstate: ${brigadeState} assignedFireLocation: ${assignedFireLocation}")
+//      Logger.info(s"brigade ${entityID} (sensing)\tstate: ${brigadeState} assignedFireLocation: ${assignedFireLocation}")
     }
 
     constraints {
@@ -69,7 +69,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     }
 
     coordination {
-      Logger.info(s"brigade ${entityID} (actuation)\t Protecting=${states.selectedMembers.exists(_ == Protecting)} Refilling=${states.selectedMembers.exists(_ == Refilling)} Idle=${states.selectedMembers.exists(_ == Idle)}")
+//      Logger.info(s"brigade ${entityID} (actuation)\t Protecting=${states.selectedMembers.exists(_ == Protecting)} Refilling=${states.selectedMembers.exists(_ == Refilling)} Idle=${states.selectedMembers.exists(_ == Idle)}")
 
       syncFields()
       sendMessages()
@@ -97,7 +97,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     private def sendMessages(): Unit = {
       val statusMap = collectStatusChanges
       val message = FireBrigadeToInitiator(brigadeState, brigadePosition, agent.currentAreaId, statusMap)
-      Logger.info(s"brigade ${entityID} sending ${message}")
+//      Logger.info(s"brigade ${entityID} sending ${message}")
       agent.sendSpeak(time, Constants.TO_STATION, Message.encode(message))
     }
 
@@ -140,17 +140,17 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
       val path = map.shortestPath.from(currentNode).pathTo(node)
       val entityIdPath = map.toAreaID(path.get)
 
-      Logger.info(s"brigade ${entityID} moving to node ${node}")
+//      Logger.info(s"brigade ${entityID} moving to node ${node}")
       agent.sendMove(time, entityIdPath)
     }
 
     private def rest(): Unit = {
-      Logger.info(s"brigade ${entityID} resting")
+//      Logger.info(s"brigade ${entityID} resting")
       agent.sendRest(time)
     }
 
     private def extinguish(): Unit = {
-      Logger.info(s"brigade ${entityID} extinguishing")
+//      Logger.info(s"brigade ${entityID} extinguishing")
       agent.sendExtinguish(time, assignedFireLocation.get, agent.asInstanceOf[FireBrigadeAgent].maxPower)
     }
 
@@ -188,8 +188,24 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
   class FireStation(val entityID: EntityID) extends Component {
     val fireCoordination = root(new FireCoordination)
 
+    def mockFires(n: Int): Unit = {
+//      nodes.map(map.toArea)
+//        .collect{ case building: Building if building.isOnFire => building.getID }
+
+      import collection.JavaConverters._
+      val buildings = agent.model.getEntitiesOfType(StandardEntityURN.BUILDING).asScala
+        .map(_.asInstanceOf[Building])
+
+      // clear
+      buildings.foreach(_.setFieryness(Fieryness.UNBURNT.ordinal()))
+
+      // set on fire
+      buildings.take(n).foreach(_.setFieryness(Fieryness.BURNING.ordinal()))
+    }
+
     sensing {
-      processReceivedMessages()
+      //processReceivedMessages()
+      mockFires(6)
     }
 
     ensembleResolution {
@@ -261,8 +277,8 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     val firePredictor = statespace(burnModel(fireLocationNode), time, fierynessValue(fierynessVal))
 
     membership {
-      brigades.all(brigade => (brigade.brigadeState == IdleMirror)
-        || (brigade.brigadeState == ProtectingMirror) && sameLocations(brigade.assignedFireLocation)) &&
+//      brigades.all(brigade => (brigade.brigadeState == IdleMirror)
+//        || (brigade.brigadeState == ProtectingMirror) && sameLocations(brigade.assignedFireLocation)) &&
       brigades.all(brigade => routesToFireLocation.costFrom(mapPosition(brigade)) match {
         case None => false
         case Some(travelTime) => firePredictor.valueAt(travelTime) < 0.9
@@ -337,7 +353,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
   class FireCoordination extends RootEnsemble /* TODO - will extend just Ensamble */ {
 
     private val buildingsOnFire = findBuildingsOnFire(map.nodes)
-    Logger.info(s">>>>  center buildingsOnFire: ${buildingsOnFire.length}")
+    Logger.info(s"Center buildingsOnFire: ${buildingsOnFire.length}")
 
     // assigns 2-3 brigades to each building
     val extinguishTeams = ensembles(buildingsOnFire.map(new ExtinguishTeam(_)))

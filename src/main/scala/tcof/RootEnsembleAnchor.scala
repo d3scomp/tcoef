@@ -6,16 +6,16 @@ class RootEnsembleAnchor[EnsembleType <: RootEnsemble] private[tcof](val builder
   def initiate() = {
     init()
 
-    Logger.info(s"RootEnsembleAnchor init called")
+//    Logger.info(s"RootEnsembleAnchor init called")
 
     while (solve()) {
-      Logger.info(s"RootEnsembleAnchor utility: ${instance.toStringWithUtility}")
+//      Logger.info(s"RootEnsembleAnchor utility: ${instance.toStringWithUtility}")
     }
 
-    Logger.info(s"RootEnsembleAnchor utility finished")
+//    Logger.info(s"RootEnsembleAnchor utility finished")
 
     commit()
-    Logger.info(s"RootEnsembleAnchor commit called")
+//    Logger.info(s"RootEnsembleAnchor commit called")
   }
 
   private var _solution: EnsembleType = _

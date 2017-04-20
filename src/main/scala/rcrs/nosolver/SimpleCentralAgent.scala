@@ -160,7 +160,7 @@ class SimpleCentralAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] with
   }
 
   override def think(time: Int, changes: ChangeSet, heard: List[Command]): Unit = {
-    Logger.info(s"CentralAgent: Think called at time $time")
+    Logger.info(s"CentralAgent: Think called at time $time - START")
     super.think(time, changes, heard)
 
     if (time == ignoreAgentCommandsUntil) {
@@ -180,10 +180,11 @@ class SimpleCentralAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] with
 
       val endTime = System.currentTimeMillis
       val timeElapsed = endTime - startTime
-      Logger.info(s">>>> Time taken: ${timeElapsed} ms")
+//      Logger.info(s">>>> Time taken: ${timeElapsed} ms")
 
       // coordination - send message to changed brigades
       coordination(changedBrigades, time)
+      Logger.info(s"CentralAgent: Think called at time $time - END, think took $timeElapsed")
     }
   }
 
@@ -211,8 +212,10 @@ class SimpleCentralAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] with
       }.sum
     }
 
-    val availableBrigades = fireBrigades.values.filter(brigade => brigade.brigadeState == IdleMirror || brigade.brigadeState == ProtectingMirror)
+    //val availableBrigades = fireBrigades.values.filter(brigade => brigade.brigadeState == IdleMirror || brigade.brigadeState == ProtectingMirror)
+    val availableBrigades = fireBrigades.values
     val fires = findBuildingsOnFire(map.nodes).toList
+    Logger.info(s"Center buildingsOnFire: ${fires.length}")
 
     val groups = GroupGenerator.generate(2, 3)(availableBrigades)
     val groupsWithTargets = GroupGenerator.zipWithPermutations(groups)(fires)
