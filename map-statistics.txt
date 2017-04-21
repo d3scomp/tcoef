@@ -1,0 +1,4 @@
+Kobe:
+
+buildings: 755
+roads: 1602
