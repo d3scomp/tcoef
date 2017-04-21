@@ -35,7 +35,7 @@
 2017-04-21 11:06:00.061 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 2 - START
 2017-04-21 11:06:05.365 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 3 - START
 2017-04-21 11:06:05.365 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Subscribing to channels
-2017-04-21 11:06:05.446 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 3
+2017-04-21 11:06:05.446 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFmire: 3
 2017-04-21 11:06:09.164 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 3 - END, think took 3798
 2017-04-21 11:06:10.668 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 4 - START
 2017-04-21 11:06:10.671 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 3
