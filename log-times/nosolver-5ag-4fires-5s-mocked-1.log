@@ -1,0 +1,137 @@
+2017-04-21 10:59:59.778 [main] INFO   - Connecting fire brigades ... 
+2017-04-21 11:00:01.874 [Thread-1] INFO  rcrs.nosolver.ScalaAgent$Agent - rcrs.nosolver.ScalaAgent$Agent@3bdaea85 connected
+2017-04-21 11:00:01.897 [Thread-1] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 11:00:01.897 [Thread-1] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 11:00:01.898 [Thread-1] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 11:00:01.981 [Thread-1] INFO  rcrs.nosolver.ScalaAgent$Agent - Fire brigade agent connected: max extinguish distance = 50000, max power = 3000, max tank = 15000
+2017-04-21 11:01:04.156 [Thread-5] INFO  rcrs.nosolver.ScalaAgent$Agent - rcrs.nosolver.ScalaAgent$Agent@6590be3c connected
+2017-04-21 11:01:04.157 [Thread-5] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 11:01:04.157 [Thread-5] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 11:01:04.157 [Thread-5] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 11:01:04.174 [Thread-5] INFO  rcrs.nosolver.ScalaAgent$Agent - Fire brigade agent connected: max extinguish distance = 50000, max power = 3000, max tank = 15000
+2017-04-21 11:01:05.308 [Thread-9] INFO  rcrs.nosolver.ScalaAgent$Agent - rcrs.nosolver.ScalaAgent$Agent@4e564450 connected
+2017-04-21 11:01:05.308 [Thread-9] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 11:01:05.308 [Thread-9] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 11:01:05.309 [Thread-9] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 11:01:05.321 [Thread-9] INFO  rcrs.nosolver.ScalaAgent$Agent - Fire brigade agent connected: max extinguish distance = 50000, max power = 3000, max tank = 15000
+2017-04-21 11:01:06.515 [Thread-13] INFO  rcrs.nosolver.ScalaAgent$Agent - rcrs.nosolver.ScalaAgent$Agent@6262c4db connected
+2017-04-21 11:01:06.516 [Thread-13] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 11:01:06.516 [Thread-13] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 11:01:06.516 [Thread-13] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 11:01:06.526 [Thread-13] INFO  rcrs.nosolver.ScalaAgent$Agent - Fire brigade agent connected: max extinguish distance = 50000, max power = 3000, max tank = 15000
+2017-04-21 11:01:07.826 [Thread-17] INFO  rcrs.nosolver.ScalaAgent$Agent - rcrs.nosolver.ScalaAgent$Agent@fffb3c connected
+2017-04-21 11:01:07.826 [Thread-17] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 11:01:07.826 [Thread-17] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 11:01:07.827 [Thread-17] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 11:01:07.837 [Thread-17] INFO  rcrs.nosolver.ScalaAgent$Agent - Fire brigade agent connected: max extinguish distance = 50000, max power = 3000, max tank = 15000
+2017-04-21 11:01:08.448 [main] INFO   - Connecting central ... 
+2017-04-21 11:01:08.494 [Thread-21] INFO  rcrs.nosolver.ScalaAgent$Agent - rcrs.nosolver.ScalaAgent$Agent@75bb491b connected
+2017-04-21 11:01:08.495 [Thread-21] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 11:01:08.495 [Thread-21] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 11:01:08.495 [Thread-21] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 11:01:08.506 [Thread-21] INFO  rcrs.nosolver.ScalaAgent$Agent - Central agent connected
+2017-04-21 11:01:09.080 [main] INFO   - success
+2017-04-21 11:01:09.192 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 1 - START
+2017-04-21 11:01:14.962 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 2 - START
+2017-04-21 11:01:20.131 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 3 - START
+2017-04-21 11:01:20.131 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Subscribing to channels
+2017-04-21 11:01:20.231 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:01:29.442 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 3 - END, think took 9311
+2017-04-21 11:01:29.442 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 4 - START
+2017-04-21 11:01:29.444 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:01:37.377 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 4 - END, think took 7935
+2017-04-21 11:01:37.378 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 5 - START
+2017-04-21 11:01:37.380 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:01:44.769 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 5 - END, think took 7391
+2017-04-21 11:01:44.769 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 6 - START
+2017-04-21 11:01:44.770 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:01:52.675 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 6 - END, think took 7906
+2017-04-21 11:01:52.676 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 7 - START
+2017-04-21 11:01:52.677 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:02:00.289 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 7 - END, think took 7613
+2017-04-21 11:02:00.289 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 8 - START
+2017-04-21 11:02:00.290 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:02:07.869 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 8 - END, think took 7580
+2017-04-21 11:02:07.870 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 9 - START
+2017-04-21 11:02:07.871 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:02:15.440 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 9 - END, think took 7570
+2017-04-21 11:02:15.441 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 10 - START
+2017-04-21 11:02:15.442 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:02:22.994 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 10 - END, think took 7553
+2017-04-21 11:02:22.995 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 11 - START
+2017-04-21 11:02:22.996 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:02:30.560 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 11 - END, think took 7565
+2017-04-21 11:02:30.561 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 12 - START
+2017-04-21 11:02:30.562 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:02:38.507 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 12 - END, think took 7946
+2017-04-21 11:02:38.507 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 13 - START
+2017-04-21 11:02:38.511 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:02:46.096 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 13 - END, think took 7586
+2017-04-21 11:02:46.096 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 14 - START
+2017-04-21 11:02:46.097 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:02:53.775 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 14 - END, think took 7679
+2017-04-21 11:02:53.775 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 15 - START
+2017-04-21 11:02:53.777 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:03:01.603 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 15 - END, think took 7827
+2017-04-21 11:03:01.603 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 16 - START
+2017-04-21 11:03:01.604 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:03:09.239 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 16 - END, think took 7636
+2017-04-21 11:03:09.240 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 17 - START
+2017-04-21 11:03:09.241 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:03:16.113 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 17 - END, think took 6873
+2017-04-21 11:03:16.113 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 18 - START
+2017-04-21 11:03:16.114 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 4
+2017-04-21 11:03:21.921 [Thread-24] ERROR rcrs.nosolver.ScalaAgent$Agent - Error sending message
+rescuecore2.connection.ConnectionException: Connection is dead
+	at rescuecore2.connection.AbstractConnection.sendMessages(AbstractConnection.java:137) ~[rescuecore2.jar:?]
+	at rescuecore2.connection.AbstractConnection.sendMessage(AbstractConnection.java:121) ~[rescuecore2.jar:?]
+	at rescuecore2.components.AbstractComponent.send(AbstractComponent.java:106) ~[rescuecore2.jar:?]
+	at rescuecore2.standard.components.StandardAgent.sendSpeak(StandardAgent.java:152) ~[standard.jar:?]
+	at rcrs.nosolver.ScalaAgent$Agent.delegateSendSpeak(SimpleCentralAgent.scala:440) ~[classes/:?]
+	at rcrs.nosolver.ScalaAgent.sendSpeak(SimpleCentralAgent.scala:417) ~[classes/:?]
+	at rcrs.nosolver.SimpleCentralAgent.$anonfun$coordination$1(SimpleCentralAgent.scala:259) ~[classes/:?]
+	at rcrs.nosolver.SimpleCentralAgent.$anonfun$coordination$1$adapted(SimpleCentralAgent.scala:256) ~[classes/:?]
+	at scala.collection.immutable.List.foreach(List.scala:378) [scala-library-2.12.0.jar:?]
+	at rcrs.nosolver.SimpleCentralAgent.coordination(SimpleCentralAgent.scala:256) [classes/:?]
+	at rcrs.nosolver.SimpleCentralAgent.think(SimpleCentralAgent.scala:183) [classes/:?]
+	at rcrs.nosolver.ScalaAgent$Agent.think(SimpleCentralAgent.scala:425) [classes/:?]
+	at rescuecore2.components.AbstractAgent.processSense(AbstractAgent.java:93) [rescuecore2.jar:?]
+	at rescuecore2.components.AbstractAgent.processMessage(AbstractAgent.java:116) [rescuecore2.jar:?]
+	at rescuecore2.components.AbstractComponent$MessageProcessor.work(AbstractComponent.java:195) [rescuecore2.jar:?]
+	at rescuecore2.misc.WorkerThread.run(WorkerThread.java:48) [rescuecore2.jar:?]
+2017-04-21 11:03:21.927 [Thread-24] ERROR rcrs.nosolver.ScalaAgent$Agent - Error sending message
+rescuecore2.connection.ConnectionException: Connection is dead
+	at rescuecore2.connection.AbstractConnection.sendMessages(AbstractConnection.java:137) ~[rescuecore2.jar:?]
+	at rescuecore2.connection.AbstractConnection.sendMessage(AbstractConnection.java:121) ~[rescuecore2.jar:?]
+	at rescuecore2.components.AbstractComponent.send(AbstractComponent.java:106) ~[rescuecore2.jar:?]
+	at rescuecore2.standard.components.StandardAgent.sendSpeak(StandardAgent.java:152) ~[standard.jar:?]
+	at rcrs.nosolver.ScalaAgent$Agent.delegateSendSpeak(SimpleCentralAgent.scala:440) ~[classes/:?]
+	at rcrs.nosolver.ScalaAgent.sendSpeak(SimpleCentralAgent.scala:417) ~[classes/:?]
+	at rcrs.nosolver.SimpleCentralAgent.$anonfun$coordination$1(SimpleCentralAgent.scala:259) ~[classes/:?]
+	at rcrs.nosolver.SimpleCentralAgent.$anonfun$coordination$1$adapted(SimpleCentralAgent.scala:256) ~[classes/:?]
+	at scala.collection.immutable.List.foreach(List.scala:378) [scala-library-2.12.0.jar:?]
+	at rcrs.nosolver.SimpleCentralAgent.coordination(SimpleCentralAgent.scala:256) [classes/:?]
+	at rcrs.nosolver.SimpleCentralAgent.think(SimpleCentralAgent.scala:183) [classes/:?]
+	at rcrs.nosolver.ScalaAgent$Agent.think(SimpleCentralAgent.scala:425) [classes/:?]
+	at rescuecore2.components.AbstractAgent.processSense(AbstractAgent.java:93) [rescuecore2.jar:?]
+	at rescuecore2.components.AbstractAgent.processMessage(AbstractAgent.java:116) [rescuecore2.jar:?]
+	at rescuecore2.components.AbstractComponent$MessageProcessor.work(AbstractComponent.java:195) [rescuecore2.jar:?]
+	at rescuecore2.misc.WorkerThread.run(WorkerThread.java:48) [rescuecore2.jar:?]
+2017-04-21 11:03:21.927 [Thread-24] ERROR rcrs.nosolver.ScalaAgent$Agent - Error sending message
+rescuecore2.connection.ConnectionException: Connection is dead
+	at rescuecore2.connection.AbstractConnection.sendMessages(AbstractConnection.java:137) ~[rescuecore2.jar:?]
+	at rescuecore2.connection.AbstractConnection.sendMessage(AbstractConnection.java:121) ~[rescuecore2.jar:?]
+	at rescuecore2.components.AbstractComponent.send(AbstractComponent.java:106) ~[rescuecore2.jar:?]
+	at rescuecore2.standard.components.StandardAgent.sendSpeak(StandardAgent.java:152) ~[standard.jar:?]
+	at rcrs.nosolver.ScalaAgent$Agent.delegateSendSpeak(SimpleCentralAgent.scala:440) ~[classes/:?]
+	at rcrs.nosolver.ScalaAgent.sendSpeak(SimpleCentralAgent.scala:417) ~[classes/:?]
+	at rcrs.nosolver.SimpleCentralAgent.$anonfun$coordination$1(SimpleCentralAgent.scala:259) ~[classes/:?]
+	at rcrs.nosolver.SimpleCentralAgent.$anonfun$coordination$1$adapted(SimpleCentralAgent.scala:256) ~[classes/:?]
+	at scala.collection.immutable.List.foreach(List.scala:378) [scala-library-2.12.0.jar:?]
+	at rcrs.nosolver.SimpleCentralAgent.coordination(SimpleCentralAgent.scala:256) [classes/:?]
+	at rcrs.nosolver.SimpleCentralAgent.think(SimpleCentralAgent.scala:183) [classes/:?]
+	at rcrs.nosolver.ScalaAgent$Agent.think(SimpleCentralAgent.scala:425) [classes/:?]
+	at rescuecore2.components.AbstractAgent.processSense(AbstractAgent.java:93) [rescuecore2.jar:?]
+	at rescuecore2.components.AbstractAgent.processMessage(AbstractAgent.java:116) [rescuecore2.jar:?]
+	at rescuecore2.components.AbstractComponent$MessageProcessor.work(AbstractComponent.java:195) [rescuecore2.jar:?]
+	at rescuecore2.misc.WorkerThread.run(WorkerThread.java:48) [rescuecore2.jar:?]

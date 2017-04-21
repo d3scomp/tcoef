@@ -1,0 +1,66 @@
+2017-04-21 10:39:06.086 [main] INFO   - Connecting fire brigades ... 
+2017-04-21 10:39:07.094 [Thread-1] INFO  rcrs.nosolver.ScalaAgent$Agent - rcrs.nosolver.ScalaAgent$Agent@3bdaea85 connected
+2017-04-21 10:39:07.115 [Thread-1] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 10:39:07.115 [Thread-1] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 10:39:07.116 [Thread-1] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 10:39:07.250 [Thread-1] INFO  rcrs.nosolver.ScalaAgent$Agent - Fire brigade agent connected: max extinguish distance = 50000, max power = 3000, max tank = 15000
+2017-04-21 10:40:01.277 [Thread-5] INFO  rcrs.nosolver.ScalaAgent$Agent - rcrs.nosolver.ScalaAgent$Agent@7591428c connected
+2017-04-21 10:40:01.277 [Thread-5] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 10:40:01.277 [Thread-5] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 10:40:01.278 [Thread-5] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 10:40:01.292 [Thread-5] INFO  rcrs.nosolver.ScalaAgent$Agent - Fire brigade agent connected: max extinguish distance = 50000, max power = 3000, max tank = 15000
+2017-04-21 10:40:02.192 [Thread-9] INFO  rcrs.nosolver.ScalaAgent$Agent - rcrs.nosolver.ScalaAgent$Agent@19fe7ab9 connected
+2017-04-21 10:40:02.192 [Thread-9] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 10:40:02.192 [Thread-9] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 10:40:02.192 [Thread-9] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 10:40:02.204 [Thread-9] INFO  rcrs.nosolver.ScalaAgent$Agent - Fire brigade agent connected: max extinguish distance = 50000, max power = 3000, max tank = 15000
+2017-04-21 10:40:03.167 [Thread-13] INFO  rcrs.nosolver.ScalaAgent$Agent - rcrs.nosolver.ScalaAgent$Agent@6262c4db connected
+2017-04-21 10:40:03.168 [Thread-13] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 10:40:03.168 [Thread-13] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 10:40:03.168 [Thread-13] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 10:40:03.179 [Thread-13] INFO  rcrs.nosolver.ScalaAgent$Agent - Fire brigade agent connected: max extinguish distance = 50000, max power = 3000, max tank = 15000
+2017-04-21 10:40:04.068 [Thread-17] INFO  rcrs.nosolver.ScalaAgent$Agent - rcrs.nosolver.ScalaAgent$Agent@5d43e648 connected
+2017-04-21 10:40:04.071 [Thread-17] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 10:40:04.071 [Thread-17] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 10:40:04.071 [Thread-17] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 10:40:04.078 [Thread-17] INFO  rcrs.nosolver.ScalaAgent$Agent - Fire brigade agent connected: max extinguish distance = 50000, max power = 3000, max tank = 15000
+2017-04-21 10:40:04.564 [main] INFO   - Connecting central ... 
+2017-04-21 10:40:04.600 [Thread-21] INFO  rcrs.nosolver.ScalaAgent$Agent - rcrs.nosolver.ScalaAgent$Agent@5f016f49 connected
+2017-04-21 10:40:04.601 [Thread-21] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 10:40:04.601 [Thread-21] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 10:40:04.601 [Thread-21] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 10:40:04.612 [Thread-21] INFO  rcrs.nosolver.ScalaAgent$Agent - Central agent connected
+2017-04-21 10:40:05.056 [main] INFO   - success
+2017-04-21 10:40:05.173 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 1 - START
+2017-04-21 10:40:25.995 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 2 - START
+2017-04-21 10:40:46.179 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 3 - START
+2017-04-21 10:40:46.180 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Subscribing to channels
+2017-04-21 10:40:46.244 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 5
+2017-04-21 10:40:56.883 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 3 - END, think took 10703
+2017-04-21 10:41:06.584 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 4 - START
+2017-04-21 10:41:06.585 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 5
+2017-04-21 10:41:17.348 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 4 - END, think took 10764
+2017-04-21 10:41:26.858 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 5 - START
+2017-04-21 10:41:26.860 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 5
+2017-04-21 10:41:37.457 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 5 - END, think took 10599
+2017-04-21 10:41:47.150 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 6 - START
+2017-04-21 10:41:47.152 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 5
+2017-04-21 10:41:56.833 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 6 - END, think took 9683
+2017-04-21 10:42:07.387 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 7 - START
+2017-04-21 10:42:07.388 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 5
+2017-04-21 10:42:17.205 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 7 - END, think took 9818
+2017-04-21 10:42:27.594 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 8 - START
+2017-04-21 10:42:27.595 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 5
+2017-04-21 10:42:37.602 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 8 - END, think took 10008
+2017-04-21 10:42:47.799 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 9 - START
+2017-04-21 10:42:47.809 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 5
+2017-04-21 10:42:57.594 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 9 - END, think took 9786
+2017-04-21 10:43:07.918 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 10 - START
+2017-04-21 10:43:07.919 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 5
+2017-04-21 10:43:17.580 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 10 - END, think took 9662
+2017-04-21 10:43:28.077 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 11 - START
+2017-04-21 10:43:28.078 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 5
+2017-04-21 10:43:37.898 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 11 - END, think took 9821
+2017-04-21 10:43:48.234 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 12 - START
+2017-04-21 10:43:48.236 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - Center buildingsOnFire: 5
+2017-04-21 10:43:58.134 [Thread-24] INFO  rcrs.nosolver.ScalaAgent$Agent - CentralAgent: Think called at time 12 - END, think took 9899

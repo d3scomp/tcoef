@@ -1,0 +1,163 @@
+2017-04-21 09:05:08.937 [main] INFO   - Connecting fire brigades ... 
+2017-04-21 09:05:09.749 [Thread-1] INFO  rcrs.ScalaAgent$Agent - rcrs.ScalaAgent$Agent@7313fecd connected
+2017-04-21 09:05:09.761 [Thread-1] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 09:05:09.761 [Thread-1] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 09:05:09.763 [Thread-1] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 09:05:56.773 [Thread-1] INFO  rcrs.ScalaAgent$Agent - Fire brigade agent connected: max extinguish distance = 50000, max power = 3000, max tank = 15000
+2017-04-21 09:05:56.894 [Thread-5] INFO  rcrs.ScalaAgent$Agent - rcrs.ScalaAgent$Agent@3df3a99a connected
+2017-04-21 09:05:56.895 [Thread-5] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 09:05:56.895 [Thread-5] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 09:05:56.895 [Thread-5] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 09:05:57.684 [Thread-5] INFO  rcrs.ScalaAgent$Agent - Fire brigade agent connected: max extinguish distance = 50000, max power = 3000, max tank = 15000
+2017-04-21 09:05:57.720 [Thread-9] INFO  rcrs.ScalaAgent$Agent - rcrs.ScalaAgent$Agent@350b54ee connected
+2017-04-21 09:05:57.720 [Thread-9] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 09:05:57.720 [Thread-9] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 09:05:57.720 [Thread-9] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 09:05:58.602 [Thread-9] INFO  rcrs.ScalaAgent$Agent - Fire brigade agent connected: max extinguish distance = 50000, max power = 3000, max tank = 15000
+2017-04-21 09:05:58.643 [Thread-13] INFO  rcrs.ScalaAgent$Agent - rcrs.ScalaAgent$Agent@5633498d connected
+2017-04-21 09:05:58.643 [Thread-13] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 09:05:58.643 [Thread-13] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 09:05:58.643 [Thread-13] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 09:05:59.555 [Thread-13] INFO  rcrs.ScalaAgent$Agent - Fire brigade agent connected: max extinguish distance = 50000, max power = 3000, max tank = 15000
+2017-04-21 09:05:59.599 [Thread-17] INFO  rcrs.ScalaAgent$Agent - rcrs.ScalaAgent$Agent@22838821 connected
+2017-04-21 09:05:59.600 [Thread-17] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 09:05:59.600 [Thread-17] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 09:05:59.600 [Thread-17] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 09:06:00.059 [Thread-17] INFO  rcrs.ScalaAgent$Agent - Fire brigade agent connected: max extinguish distance = 50000, max power = 3000, max tank = 15000
+2017-04-21 09:06:00.060 [main] INFO   - Connecting central ... 
+2017-04-21 09:06:00.096 [Thread-21] INFO  rcrs.ScalaAgent$Agent - rcrs.ScalaAgent$Agent@74e4a1cc connected
+2017-04-21 09:06:00.096 [Thread-21] WARN  com.infomatiq.jsi.rtree.RTree - Invalid MaxNodeEntries = 0 Resetting to default value of 10
+2017-04-21 09:06:00.096 [Thread-21] WARN  com.infomatiq.jsi.rtree.RTree - MinNodeEntries must be between 1 and MaxNodeEntries / 2
+2017-04-21 09:06:00.097 [Thread-21] INFO  com.infomatiq.jsi.rtree.RTree - init()  MaxNodeEntries = 10, MinNodeEntries = 5
+2017-04-21 09:06:00.102 [Thread-21] INFO  rcrs.ScalaAgent$Agent - Central agent connected
+2017-04-21 09:06:00.554 [main] INFO   - success
+2017-04-21 09:06:00.651 [Thread-24] INFO  rcrs.ScalaAgent$Agent - CentralAgent: Think called at time 1 - START
+2017-04-21 09:06:31.445 [Thread-24] INFO  rcrs.ScalaAgent$Agent - CentralAgent: Think called at time 2 - START
+2017-04-21 09:07:01.715 [Thread-24] INFO  rcrs.ScalaAgent$Agent - CentralAgent: Think called at time 3 - START
+2017-04-21 09:07:01.715 [Thread-24] INFO  rcrs.ScalaAgent$Agent - Subscribing to channels
+2017-04-21 09:07:02.012 [Thread-24] INFO  rcrs.ScalaAgent$Agent - Center buildingsOnFire: 7
+2017-04-21 09:09:19.373 [Thread-24] INFO  rcrs.ScalaAgent$Agent - CentralAgent: Think called at time 3 - END, think took 137657
+2017-04-21 09:09:19.373 [Thread-24] INFO  rcrs.ScalaAgent$Agent - CentralAgent: Think called at time 4 - START
+2017-04-21 09:09:19.376 [Thread-24] INFO  rcrs.ScalaAgent$Agent - Center buildingsOnFire: 7
+2017-04-21 09:11:05.985 [Thread-24] INFO  rcrs.ScalaAgent$Agent - CentralAgent: Think called at time 4 - END, think took 106611
+2017-04-21 09:11:05.985 [Thread-24] INFO  rcrs.ScalaAgent$Agent - CentralAgent: Think called at time 5 - START
+2017-04-21 09:11:05.989 [Thread-24] INFO  rcrs.ScalaAgent$Agent - Center buildingsOnFire: 7
+2017-04-21 09:12:58.331 [Thread-24] INFO  rcrs.ScalaAgent$Agent - CentralAgent: Think called at time 5 - END, think took 112346
+2017-04-21 09:12:58.332 [Thread-24] INFO  rcrs.ScalaAgent$Agent - CentralAgent: Think called at time 6 - START
+2017-04-21 09:12:58.333 [Thread-24] INFO  rcrs.ScalaAgent$Agent - Center buildingsOnFire: 7
+2017-04-21 09:15:12.763 [Thread-24] INFO  rcrs.ScalaAgent$Agent - CentralAgent: Think called at time 6 - END, think took 134431
+2017-04-21 09:15:12.763 [Thread-24] INFO  rcrs.ScalaAgent$Agent - CentralAgent: Think called at time 7 - START
+2017-04-21 09:15:12.765 [Thread-24] INFO  rcrs.ScalaAgent$Agent - Center buildingsOnFire: 7
+2017-04-21 09:16:58.832 [Thread-24] INFO  rcrs.ScalaAgent$Agent - CentralAgent: Think called at time 7 - END, think took 106068
+2017-04-21 09:16:58.832 [Thread-24] INFO  rcrs.ScalaAgent$Agent - CentralAgent: Think called at time 8 - START
+2017-04-21 09:16:58.833 [Thread-24] INFO  rcrs.ScalaAgent$Agent - Center buildingsOnFire: 7
+2017-04-21 09:18:44.786 [Thread-24] ERROR rcrs.ScalaAgent$Agent - Error sending message
+rescuecore2.connection.ConnectionException: Connection is dead
+	at rescuecore2.connection.AbstractConnection.sendMessages(AbstractConnection.java:137) ~[rescuecore2.jar:?]
+	at rescuecore2.connection.AbstractConnection.sendMessage(AbstractConnection.java:121) ~[rescuecore2.jar:?]
+	at rescuecore2.components.AbstractComponent.send(AbstractComponent.java:106) ~[rescuecore2.jar:?]
+	at rescuecore2.standard.components.StandardAgent.sendSpeak(StandardAgent.java:152) ~[standard.jar:?]
+	at rcrs.ScalaAgent$Agent.delegateSendSpeak(ScalaAgent.scala:79) ~[classes/:?]
+	at rcrs.ScalaAgent.sendSpeak(ScalaAgent.scala:51) ~[classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$10(ProtectScenario.scala:223) ~[classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$10$adapted(ProtectScenario.scala:218) ~[classes/:?]
+	at scala.collection.mutable.ArraySeq.foreach(ArraySeq.scala:74) ~[scala-library-2.12.0.jar:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$9(ProtectScenario.scala:218) ~[classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$9$adapted(ProtectScenario.scala:217) ~[classes/:?]
+	at scala.collection.mutable.ArraySeq.foreach(ArraySeq.scala:74) ~[scala-library-2.12.0.jar:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$8(ProtectScenario.scala:217) ~[classes/:?]
+	at tcof.WithActionsInComponent.$anonfun$_executeActions$1(WithActionsInComponent.scala:14) ~[classes/:?]
+	at tcof.WithActionsInComponent.$anonfun$_executeActions$1$adapted(WithActionsInComponent.scala:14) ~[classes/:?]
+	at scala.collection.immutable.List.foreach(List.scala:378) [scala-library-2.12.0.jar:?]
+	at scala.collection.mutable.ListBuffer.foreach(ListBuffer.scala:44) [scala-library-2.12.0.jar:?]
+	at tcof.WithActionsInComponent._executeActions(WithActionsInComponent.scala:14) [classes/:?]
+	at tcof.WithActionsInComponent._executeActions$(WithActionsInComponent.scala:14) [classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation._executeActions(ProtectScenario.scala:188) [classes/:?]
+	at tcof.Component.commit(Component.scala:63) [classes/:?]
+	at tcof.Component.commit$(Component.scala:61) [classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation.commit(ProtectScenario.scala:188) [classes/:?]
+	at rcrs.CentralAgent.think(CentralAgent.scala:56) [classes/:?]
+	at rcrs.ScalaAgent$Agent.think(ScalaAgent.scala:59) [classes/:?]
+	at rescuecore2.components.AbstractAgent.processSense(AbstractAgent.java:93) [rescuecore2.jar:?]
+	at rescuecore2.components.AbstractAgent.processMessage(AbstractAgent.java:116) [rescuecore2.jar:?]
+	at rescuecore2.components.AbstractComponent$MessageProcessor.work(AbstractComponent.java:195) [rescuecore2.jar:?]
+	at rescuecore2.misc.WorkerThread.run(WorkerThread.java:48) [rescuecore2.jar:?]
+2017-04-21 09:18:44.798 [Thread-24] ERROR rcrs.ScalaAgent$Agent - Error sending message
+rescuecore2.connection.ConnectionException: Connection is dead
+	at rescuecore2.connection.AbstractConnection.sendMessages(AbstractConnection.java:137) ~[rescuecore2.jar:?]
+	at rescuecore2.connection.AbstractConnection.sendMessage(AbstractConnection.java:121) ~[rescuecore2.jar:?]
+	at rescuecore2.components.AbstractComponent.send(AbstractComponent.java:106) ~[rescuecore2.jar:?]
+	at rescuecore2.standard.components.StandardAgent.sendSpeak(StandardAgent.java:152) ~[standard.jar:?]
+	at rcrs.ScalaAgent$Agent.delegateSendSpeak(ScalaAgent.scala:79) ~[classes/:?]
+	at rcrs.ScalaAgent.sendSpeak(ScalaAgent.scala:51) ~[classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$10(ProtectScenario.scala:223) ~[classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$10$adapted(ProtectScenario.scala:218) ~[classes/:?]
+	at scala.collection.mutable.ArraySeq.foreach(ArraySeq.scala:74) ~[scala-library-2.12.0.jar:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$9(ProtectScenario.scala:218) ~[classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$9$adapted(ProtectScenario.scala:217) ~[classes/:?]
+	at scala.collection.mutable.ArraySeq.foreach(ArraySeq.scala:74) ~[scala-library-2.12.0.jar:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$8(ProtectScenario.scala:217) ~[classes/:?]
+	at tcof.WithActionsInComponent.$anonfun$_executeActions$1(WithActionsInComponent.scala:14) ~[classes/:?]
+	at tcof.WithActionsInComponent.$anonfun$_executeActions$1$adapted(WithActionsInComponent.scala:14) ~[classes/:?]
+	at scala.collection.immutable.List.foreach(List.scala:378) [scala-library-2.12.0.jar:?]
+	at scala.collection.mutable.ListBuffer.foreach(ListBuffer.scala:44) [scala-library-2.12.0.jar:?]
+	at tcof.WithActionsInComponent._executeActions(WithActionsInComponent.scala:14) [classes/:?]
+	at tcof.WithActionsInComponent._executeActions$(WithActionsInComponent.scala:14) [classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation._executeActions(ProtectScenario.scala:188) [classes/:?]
+	at tcof.Component.commit(Component.scala:63) [classes/:?]
+	at tcof.Component.commit$(Component.scala:61) [classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation.commit(ProtectScenario.scala:188) [classes/:?]
+	at rcrs.CentralAgent.think(CentralAgent.scala:56) [classes/:?]
+	at rcrs.ScalaAgent$Agent.think(ScalaAgent.scala:59) [classes/:?]
+	at rescuecore2.components.AbstractAgent.processSense(AbstractAgent.java:93) [rescuecore2.jar:?]
+	at rescuecore2.components.AbstractAgent.processMessage(AbstractAgent.java:116) [rescuecore2.jar:?]
+	at rescuecore2.components.AbstractComponent$MessageProcessor.work(AbstractComponent.java:195) [rescuecore2.jar:?]
+	at rescuecore2.misc.WorkerThread.run(WorkerThread.java:48) [rescuecore2.jar:?]
+2017-04-21 09:18:44.799 [Thread-24] ERROR rcrs.ScalaAgent$Agent - Error sending message
+rescuecore2.connection.ConnectionException: Connection is dead
+	at rescuecore2.connection.AbstractConnection.sendMessages(AbstractConnection.java:137) ~[rescuecore2.jar:?]
+	at rescuecore2.connection.AbstractConnection.sendMessage(AbstractConnection.java:121) ~[rescuecore2.jar:?]
+	at rescuecore2.components.AbstractComponent.send(AbstractComponent.java:106) ~[rescuecore2.jar:?]
+	at rescuecore2.standard.components.StandardAgent.sendSpeak(StandardAgent.java:152) ~[standard.jar:?]
+	at rcrs.ScalaAgent$Agent.delegateSendSpeak(ScalaAgent.scala:79) ~[classes/:?]
+	at rcrs.ScalaAgent.sendSpeak(ScalaAgent.scala:51) ~[classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$10(ProtectScenario.scala:223) ~[classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$10$adapted(ProtectScenario.scala:218) ~[classes/:?]
+	at scala.collection.mutable.ArraySeq.foreach(ArraySeq.scala:74) ~[scala-library-2.12.0.jar:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$9(ProtectScenario.scala:218) ~[classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$9$adapted(ProtectScenario.scala:217) ~[classes/:?]
+	at scala.collection.mutable.ArraySeq.foreach(ArraySeq.scala:74) ~[scala-library-2.12.0.jar:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$8(ProtectScenario.scala:217) ~[classes/:?]
+	at tcof.WithActionsInComponent.$anonfun$_executeActions$1(WithActionsInComponent.scala:14) ~[classes/:?]
+	at tcof.WithActionsInComponent.$anonfun$_executeActions$1$adapted(WithActionsInComponent.scala:14) ~[classes/:?]
+	at scala.collection.immutable.List.foreach(List.scala:378) [scala-library-2.12.0.jar:?]
+	at scala.collection.mutable.ListBuffer.foreach(ListBuffer.scala:44) [scala-library-2.12.0.jar:?]
+	at tcof.WithActionsInComponent._executeActions(WithActionsInComponent.scala:14) [classes/:?]
+	at tcof.WithActionsInComponent._executeActions$(WithActionsInComponent.scala:14) [classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation._executeActions(ProtectScenario.scala:188) [classes/:?]
+	at tcof.Component.commit(Component.scala:63) [classes/:?]
+	at tcof.Component.commit$(Component.scala:61) [classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation.commit(ProtectScenario.scala:188) [classes/:?]
+	at rcrs.CentralAgent.think(CentralAgent.scala:56) [classes/:?]
+	at rcrs.ScalaAgent$Agent.think(ScalaAgent.scala:59) [classes/:?]
+	at rescuecore2.components.AbstractAgent.processSense(AbstractAgent.java:93) [rescuecore2.jar:?]
+	at rescuecore2.components.AbstractAgent.processMessage(AbstractAgent.java:116) [rescuecore2.jar:?]
+	at rescuecore2.components.AbstractComponent$MessageProcessor.work(AbstractComponent.java:195) [rescuecore2.jar:?]
+	at rescuecore2.misc.WorkerThread.run(WorkerThread.java:48) [rescuecore2.jar:?]
+2017-04-21 09:18:44.799 [Thread-24] ERROR rcrs.ScalaAgent$Agent - Error sending message
+rescuecore2.connection.ConnectionException: Connection is dead
+	at rescuecore2.connection.AbstractConnection.sendMessages(AbstractConnection.java:137) ~[rescuecore2.jar:?]
+	at rescuecore2.connection.AbstractConnection.sendMessage(AbstractConnection.java:121) ~[rescuecore2.jar:?]
+	at rescuecore2.components.AbstractComponent.send(AbstractComponent.java:106) ~[rescuecore2.jar:?]
+	at rescuecore2.standard.components.StandardAgent.sendSpeak(StandardAgent.java:152) ~[standard.jar:?]
+	at rcrs.ScalaAgent$Agent.delegateSendSpeak(ScalaAgent.scala:79) ~[classes/:?]
+	at rcrs.ScalaAgent.sendSpeak(ScalaAgent.scala:51) ~[classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$10(ProtectScenario.scala:223) ~[classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$10$adapted(ProtectScenario.scala:218) ~[classes/:?]
+	at scala.collection.mutable.ArraySeq.foreach(ArraySeq.scala:74) ~[scala-library-2.12.0.jar:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$9(ProtectScenario.scala:218) ~[classes/:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$9$adapted(ProtectScenario.scala:217) ~[classes/:?]
+	at scala.collection.mutable.ArraySeq.foreach(ArraySeq.scala:74) ~[scala-library-2.12.0.jar:?]
+	at rcrs.scenario.ProtectScenario$FireStation.$anonfun$new$8(ProtectScenario.scala:217) ~[classes/:?]
+	at tcof.WithActionsInComponent.$anonfun$_executeActions$1(WithActionsInComponent.scala:14) ~[classes/:?]
+	at tcof.WithActionsInComponent.$anonfun$_executeActi

@@ -7,6 +7,7 @@ project/boot/
 
 *.class
 *.log
+!log-times/*
 
 .lib/
 dist/*
