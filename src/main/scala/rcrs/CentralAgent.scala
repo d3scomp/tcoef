@@ -31,6 +31,8 @@ class CentralAgent extends ScalaAgent {
 
   override def think(time: Int, changes: ChangeSet, heard: List[Command]): Unit = {
     Logger.info(s"CentralAgent: Think called at time $time - START")
+    val startTime = System.currentTimeMillis()
+
     super.think(time, changes, heard)
 
     if (time == ignoreAgentCommandsUntil) {
@@ -44,19 +46,16 @@ class CentralAgent extends ScalaAgent {
       // solve component
       component.init()
 
-      val startTime = System.currentTimeMillis()
-
       while (component.solve()) {
         //println(component.toStringWithUtility)
         //Logger.info(s">>>> ${component.toStringWithUtility}")
       }
 
+      component.commit()
+
       val endTime = System.currentTimeMillis()
       val timeElapsed = endTime - startTime
-
       Logger.info(s"CentralAgent: Think called at time $time - END, think took $timeElapsed")
-
-      component.commit()
     }
   }
 

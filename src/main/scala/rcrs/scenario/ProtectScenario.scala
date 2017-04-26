@@ -205,7 +205,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
     sensing {
       //processReceivedMessages()
-      mockFires(6)
+      mockFires(3)
     }
 
     ensembleResolution {
@@ -277,8 +277,8 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
     val firePredictor = statespace(burnModel(fireLocationNode), time, fierynessValue(fierynessVal))
 
     membership {
-//      brigades.all(brigade => (brigade.brigadeState == IdleMirror)
-//        || (brigade.brigadeState == ProtectingMirror) && sameLocations(brigade.assignedFireLocation)) &&
+      brigades.all(brigade => (brigade.brigadeState == IdleMirror)
+        || (brigade.brigadeState == ProtectingMirror) && sameLocations(brigade.assignedFireLocation)) &&
       brigades.all(brigade => routesToFireLocation.costFrom(mapPosition(brigade)) match {
         case None => false
         case Some(travelTime) => firePredictor.valueAt(travelTime) < 0.9

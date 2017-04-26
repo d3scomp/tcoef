@@ -153,6 +153,11 @@ class SimpleCentralAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] with
   override protected def postConnect() {
     Logger.info(s"Central agent connected")
 
+    val buildingsNum = this.agent.model.getEntitiesOfType(StandardEntityURN.BUILDING).size()
+    val roadsNum = this.agent.model.getEntitiesOfType(StandardEntityURN.ROAD).size()
+
+    Logger.info(s"Map - buildings: ${buildingsNum}, roads: ${roadsNum}")
+
     fireBrigades = createSimpleFireBrigades
 
     super.postConnect()
@@ -161,6 +166,8 @@ class SimpleCentralAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] with
 
   override def think(time: Int, changes: ChangeSet, heard: List[Command]): Unit = {
     Logger.info(s"CentralAgent: Think called at time $time - START")
+    val startTime = System.currentTimeMillis
+
     super.think(time, changes, heard)
 
     if (time == ignoreAgentCommandsUntil) {
@@ -171,19 +178,17 @@ class SimpleCentralAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] with
     if (time >= ignoreAgentCommandsUntil) {
 
       // sensing - process heard messages
-      processReceivedMessages(heard)
-
-      val startTime = System.currentTimeMillis
+      //processReceivedMessages(heard)
+      mockFires(3)
 
       // ensembleResolution - compute solution with highest utility and assign it to SimpleFireBrigades
       val changedBrigades = resolveEnsembles(time)
 
-      val endTime = System.currentTimeMillis
-      val timeElapsed = endTime - startTime
-//      Logger.info(s">>>> Time taken: ${timeElapsed} ms")
-
       // coordination - send message to changed brigades
       coordination(changedBrigades, time)
+
+      val endTime = System.currentTimeMillis
+      val timeElapsed = endTime - startTime
       Logger.info(s"CentralAgent: Think called at time $time - END, think took $timeElapsed")
     }
   }
@@ -258,6 +263,21 @@ class SimpleCentralAgent extends ScalaAgent with Map2DTrait[RCRSNodeStatus] with
       val message = InitiatorToFireBrigade(brigade.entityID, brigade.brigadeState, buildingEntityID)
       agent.sendSpeak(time, Constants.TO_AGENTS, Message.encode(message))
     }
+  }
+
+  def mockFires(n: Int): Unit = {
+    //      nodes.map(map.toArea)
+    //        .collect{ case building: Building if building.isOnFire => building.getID }
+
+    import collection.JavaConverters._
+    val buildings = agent.model.getEntitiesOfType(StandardEntityURN.BUILDING).asScala
+      .map(_.asInstanceOf[Building])
+
+    // clear
+    buildings.foreach(_.setFieryness(Fieryness.UNBURNT.ordinal()))
+
+    // set on fire
+    buildings.take(n).foreach(_.setFieryness(Fieryness.BURNING.ordinal()))
   }
 
   private def processReceivedMessages(heard: List[Command]): Unit = {

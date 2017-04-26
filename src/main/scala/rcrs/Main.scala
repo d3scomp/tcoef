@@ -26,13 +26,13 @@ object Main {
 
     Logger.info("Connecting fire brigades ... ")
     for (_ <- 1 to 5) {
-      launcher.connect(new FireBrigadeAgent().rcrsAgent)
-//      launcher.connect(new SimpleFireBrigadeAgent().rcrsAgent)
+//      launcher.connect(new FireBrigadeAgent().rcrsAgent)
+      launcher.connect(new SimpleFireBrigadeAgent().rcrsAgent)
     }
 
     Logger.info("Connecting central ... ")
-    launcher.connect(new CentralAgent().rcrsAgent)
-//    launcher.connect(new SimpleCentralAgent().rcrsAgent)
+//    launcher.connect(new CentralAgent().rcrsAgent)
+    launcher.connect(new SimpleCentralAgent().rcrsAgent)
 
     Logger.info("success")
   }
