@@ -1,0 +1,82 @@
+@startuml
+namespace tcof {
+
+abstract class Component {
+  +sensing()
+  +constraints()
+  +utility()
+  +coordination()
+  +ensembleResolution()
+}
+
+abstract class Ensemble {
+  +membership()
+  +utility()
+  +coordination()
+}
+
+abstract class Model {
+}
+
+abstract class Role {
+  +all()
+  +some()
+  +contains()
+  +selectedMembers()
+}
+
+abstract class State {
+}
+
+}
+
+namespace tcof.traits {
+abstract class Map2DTrait {
+}
+
+abstract class StateSpaceTrait {
+}
+
+}
+
+
+
+namespace usercode {
+
+class FireFightingScenario {  
+}
+
+class FireFighter {
+}
+
+class FireFightingTeam {
+}
+
+}
+
+tcof.Ensemble -- tcof.Ensemble: parent
+tcof.Ensemble --* tcof.Ensemble: children
+
+tcof.Component --* tcof.Model: components
+
+tcof.Role -- tcof.Role: parent
+tcof.Role --* tcof.Role: children
+tcof.Component <-- tcof.Role: components
+
+tcof.Role --* usercode.FireFightingTeam: fireFighters
+
+tcof.State -- tcof.State : parent
+tcof.State --* tcof.State : children
+tcof.State --* tcof.Component: states
+
+tcof.Ensemble --* tcof.Component: initiator
+
+tcof.Model <|- usercode.FireFightingScenario
+tcof.traits.StateSpaceTrait <|- usercode.FireFightingScenario
+
+tcof.traits.Map2DTrait <|- usercode.FireFightingScenario
+
+tcof.Component <|- usercode.FireFighter
+
+tcof.Ensemble <|- usercode.FireFightingTeam
+@enduml
