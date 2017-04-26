@@ -13,8 +13,9 @@ The project consists of the following parts, identified by their path in the fol
 # Main concepts
 
 ![Simplified tcof class diagram](https://github.com/d3scomp/tcof/blob/master/doc/tcof-class-diagram.png "Simplified tcof class diagram")
+_Fig. 1 - Simplified tcof class diagram_
 
-The class diagram XXX presents a simplified overview of the tcof library. Some classes/traits are intentionally merged into single class in the diagram (e.g., Ensemble, EnsembleGroup, EnsembleGroupMembers traits are represented by the Ensemble abstract class) for the sake of brevity. The library also contains more non-core reusable traits (tcof.traits) than shown in the diagram.
+The class diagram in Fig. 1 presents a simplified overview of the tcof library. Some classes/traits are intentionally merged into single class in the diagram (e.g., Ensemble, EnsembleGroup, EnsembleGroupMembers traits are represented by the Ensemble abstract class) for the sake of brevity. The library also contains more non-core reusable traits (tcof.traits) than shown in the diagram.
 
 tcof package contains the following core traits/classes:
 
@@ -34,10 +35,13 @@ _Model_ - represents a system based on periodical computation. Model class serve
 
 # External vs. internal DSL development approach
 
-In parallel with TCOF-ADL, we have designed a similar language but this time as an external DSL, i.e., an independent language (while TCOF-DSL is an internal DSL, i.e., embedded in the Scala language). This DSL, dubbed the Ensemble Definition Language (EDL for short), is implemented with help of the Java DSL development stack – the Xtext and XTend technologies, as well as Ecore-based modelling tools have been used. As an example, we use the ProtectionTeam ensemble from the accompanying paper – an ensemble consisting of 2 to 3 firefighter brigades assigned to a certain fire location (e.g. a building). Fig. 1 shows the realization of such ensemble in TCOF-ADL, whereas Fig. 3 presents an EDL description with analogous functionality. EDL supports a similar set of concepts as TCOF-ADL, including ensembles, components, utility function (called fitness in the EDL) and membership definition – though ensemble nesting is not allowed.
+In parallel with TCOF-ADL, we have designed a similar language but this time as an external DSL, i.e., an independent language (while TCOF-DSL is an internal DSL, i.e., embedded in the Scala language). This DSL, dubbed the Ensemble Definition Language (EDL for short), is implemented with help of the Java DSL development stack – the Xtext and XTend technologies, as well as Ecore-based modelling tools have been used. As an example, we use the ProtectionTeam ensemble from the accompanying paper – an ensemble consisting of 2 to 3 firefighter brigades assigned to a certain fire location (e.g. a building). Fig. 2 shows the realization of such ensemble in TCOF-ADL, whereas Fig. 3 presents an EDL description with analogous functionality. EDL supports a similar set of concepts as TCOF-ADL, including ensembles, components, utility function (called fitness in the EDL) and membership definition – though ensemble nesting is not allowed.
 
-![tcof DSL example](https://github.com/d3scomp/tcof/blob/master/doc/tcof-code.png "tcof DSL example")
-![EDL DSL example](https://github.com/d3scomp/tcof/blob/master/doc/edl-code.png "EDL DSL example")
+![tcof DSL example](https://github.com/d3scomp/tcof/blob/master/doc/tcof-code.png "TCOF-ADL example")
+_Fig. 2 - ensemble in TCOF-ADL notation_
+
+![EDL DSL example](https://github.com/d3scomp/tcof/blob/master/doc/edl-code.png "EDL-ADL example")
+_Fig. 3 - ensemble in EDL-ADL notation_
 
 Compared to the internal-DSL approach, the external-DSL way has both pros and cons.
 External DSL pros. Due to having a separate compilation step and working with the model of the ensemble description instead of just data, the external DSL is directly capable of reflective code generation – it is therefore potentially more powerful. Additionally, because the external language design is not bound by the restrictions imposed by a host language, some concepts can be captured more naturally. An example of this can be seen in the role declaration in an ensemble type. Whereas declaring a role in the internal DSL requires passing the name of the role as a string constant (a redundancy, as the name is also used in the field declaration), in the EDL the same declaration can be realized very concisely and intuitively. Of course, this important advantage can also hold a hidden disadvantage – any users of the EDL need to learn and understand a new language. However, as the users need to understand the key concepts of the approach (ensembles, roles, etc.) to use it anyway, they may in the end find the effort of learning a relatively straightforward language for capturing these new concepts a minor investment. Finally, due to being a separate language, the external DSL could conceivably be mapped to different host languages and platforms, generating code for the .NET platform, C++ implementations, etc. This very same language neutrality can also be used to support interoperability of components running on various technology stacks in a single system, allowing for truly heterogeneous deployments.
