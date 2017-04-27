@@ -4,6 +4,9 @@ Trait-based Coalition Formation Framework
 master: [![Build Status](https://travis-ci.org/d3scomp/tcof.svg?branch=master)](https://travis-ci.org/d3scomp/tcof)
 develop: [![Build Status](https://travis-ci.org/d3scomp/tcof.svg?branch=develop)](https://travis-ci.org/d3scomp/tcof/branches)
 
+## Documentation
+See [companion page](https://github.com/d3scomp/tcof/blob/master/TECHNICAL.md).
+
 ## Installation + run
 
 1. Install Scala (at least 2.12.1), see http://www.scala-lang.org/download/
