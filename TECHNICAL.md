@@ -12,7 +12,7 @@ The project consists of the following parts, identified by their path in the fol
 
 # Main concepts
 
-![Simplified tcof class diagram](https://github.com/d3scomp/tcof/blob/master/doc/tcof-class-diagram.png "Simplified tcof class diagram")
+![Simplified tcof class diagram](https://github.com/d3scomp/tcof/blob/master/doc/tcof-class-diagram.png "Simplified tcof class diagram")  
 _Fig. 1 - Simplified tcof class diagram_
 
 The class diagram in Fig. 1 presents a simplified overview of the tcof library. Some classes/traits are intentionally merged into single class in the diagram (e.g., Ensemble, EnsembleGroup, EnsembleGroupMembers traits are represented by the Ensemble abstract class) for the sake of brevity. The library also contains more non-core reusable traits (tcof.traits) than shown in the diagram.
@@ -37,10 +37,10 @@ _Model_ - represents a system based on periodical computation. Model class serve
 
 In parallel with TCOF-ADL, we have designed a similar language but this time as an external DSL, i.e., an independent language (while TCOF-DSL is an internal DSL, i.e., embedded in the Scala language). This DSL, dubbed the Ensemble Definition Language (EDL for short), is implemented with help of the Java DSL development stack – the Xtext and XTend technologies, as well as Ecore-based modelling tools have been used. As an example, we use the ProtectionTeam ensemble from the accompanying paper – an ensemble consisting of 2 to 3 firefighter brigades assigned to a certain fire location (e.g. a building). Fig. 2 shows the realization of such ensemble in TCOF-ADL, whereas Fig. 3 presents an EDL description with analogous functionality. EDL supports a similar set of concepts as TCOF-ADL, including ensembles, components, utility function (called fitness in the EDL) and membership definition – though ensemble nesting is not allowed.
 
-![tcof DSL example](https://github.com/d3scomp/tcof/blob/master/doc/tcof-code.png "TCOF-ADL example")
+![tcof DSL example](https://github.com/d3scomp/tcof/blob/master/doc/tcof-code.png "TCOF-ADL example")  
 _Fig. 2 - ensemble in TCOF-ADL notation_
 
-![EDL DSL example](https://github.com/d3scomp/tcof/blob/master/doc/edl-code.png "EDL-ADL example")
+![EDL DSL example](https://github.com/d3scomp/tcof/blob/master/doc/edl-code.png "EDL-ADL example")  
 _Fig. 3 - ensemble in EDL-ADL notation_
 
 Compared to the internal-DSL approach, the external-DSL way has both pros and cons.
