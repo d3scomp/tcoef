@@ -57,7 +57,8 @@ External DSL | Internal DSL
 Additional compilation step, possibility of code generation | Easier to integrate – direct access to the host language
 Language design can be more flexible, tailored to the problem | Faster development cycle
 Can be platform and language neutral | No need to learn new tools or language
-Can support heterogeneous deployments	| Much lower initial investment  
+Can support heterogeneous deployments	| Much lower initial investment
+
 _Table 1 - ensemble in EDL-ADL notation_
 
 # Experience from DSL development
