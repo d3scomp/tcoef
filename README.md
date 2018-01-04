@@ -1,8 +1,8 @@
 # tcoof
 Trait-based Coalition Formation Framework
 
-master: [![Build Status](https://travis-ci.org/d3scomp/tcof.svg?branch=master)](https://travis-ci.org/d3scomp/tcof)
-develop: [![Build Status](https://travis-ci.org/d3scomp/tcof.svg?branch=develop)](https://travis-ci.org/d3scomp/tcof/branches)
+master: [![Build Status](https://travis-ci.org/d3scomp/tcof.svg?branch=master)](https://travis-ci.org/d3scomp/tcoof)
+develop: [![Build Status](https://travis-ci.org/d3scomp/tcof.svg?branch=develop)](https://travis-ci.org/d3scomp/tcoof/branches)
 
 ## Documentation
 See [companion page](https://github.com/d3scomp/tcof/blob/master/TECHNICAL.md).
