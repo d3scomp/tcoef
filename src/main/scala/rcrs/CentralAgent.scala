@@ -9,7 +9,7 @@ import rescuecore2.worldmodel.ChangeSet
 import tcof.traits.map2d.Position
 
 
-class CentralAgent extends ScalaAgent {
+class CentralAgent(val mockFiresCount: Int) extends ScalaAgent {
   override type AgentEntityType = Building
 
   val scenario = new ProtectScenario(this)
@@ -21,7 +21,7 @@ class CentralAgent extends ScalaAgent {
     Logger.info(s"Central agent connected")
 
     // component initialization
-    component = createFireStationComponent
+    component = createFireStationComponent(mockFiresCount)
     fireBrigadeComponents = createFireBrigadeComponents
     scenario.components = component +: fireBrigadeComponents.toList
 
@@ -70,10 +70,10 @@ class CentralAgent extends ScalaAgent {
     }
   }
 
-  private def createFireStationComponent: scenario.FireStation = {
+  private def createFireStationComponent(mockFiresCount: Int): scenario.FireStation = {
     // TODO - assumption - exactly one fire station exists
     val fs = findEntities[FireStation](StandardEntityURN.FIRE_STATION).head
-    new scenario.FireStation(fs.getID)
+    new scenario.FireStation(fs.getID, mockFiresCount)
   }
 
   private def findEntities[T <: StandardEntity](urn: StandardEntityURN): Iterable[T] = {

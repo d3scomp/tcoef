@@ -185,7 +185,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
   }
 
 
-  class FireStation(val entityID: EntityID) extends Component {
+  class FireStation(val entityID: EntityID, val mockFiresCount: Int) extends Component {
     val fireCoordination = root(new FireCoordination)
 
     def mockFires(n: Int): Unit = {
@@ -205,7 +205,7 @@ class ProtectScenario(scalaAgent: ScalaAgent) extends Model with RCRSConnectorTr
 
     sensing {
       //processReceivedMessages()
-      mockFires(3)
+      mockFires(mockFiresCount)
     }
 
     ensembleResolution {
